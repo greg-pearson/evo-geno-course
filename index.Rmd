@@ -8,6 +8,9 @@ output:
     highlight: github
 ---
 
+
+![](./images/beartooth-butte.jpg)
+
 # Labs
 
 - 1: [Lab 1 - Introduction to R and Reproducible Research](./labs/lab-1/lab-1-glp.html)
