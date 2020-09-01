@@ -1,13 +1,14 @@
 ---
 title: "index"
 author: "Greg Pearson"
-date: "8/31/2020"
-output: html_document
+date: "last updated: 8/31/2020"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 ---
 
 # Labs
-
-## R Basics
 
 - 1: [Lab 1 - Introduction to R and Reproducible Research](./labs/lab-1/lab-1-glp.html)
 
