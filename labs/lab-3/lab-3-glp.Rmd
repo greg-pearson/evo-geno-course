@@ -5,3 +5,15 @@ date: "8/31/2020"
 output: html_document
 ---
 
+```{python}
+path_to_python <- "~/anaconda3/bin/python"
+use_python(path_to_python)
+```
+
+
+```{python}
+
+import pandas as pd
+
+```
+
