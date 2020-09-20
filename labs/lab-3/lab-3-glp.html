@@ -13136,6 +13136,26 @@ div#notebook {
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Lesson Objectives</strong></p>
+<ul>
+<li>Navigate the workshop directory and download a dataset.</li>
+<li>Explain what a library is and what libraries are used for.</li>
+<li>Describe what the Python Data Analysis Library (Pandas) is.</li>
+<li>Load the Python Data Analysis Library (Pandas).</li>
+<li>Use read_csv to read tabular data into Python.</li>
+<li>Describe what a DataFrame is in Python.</li>
+<li>Access and summarize data stored in a DataFrame.</li>
+<li>Define indexing as it relates to data structures.</li>
+<li>Perform basic mathematical operations and summary statistics on data in a Pandas DataFrame.</li>
+<li>Create simple plots.</li>
+</ul>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -15736,6 +15756,25 @@ Create a stacked bar plot, with weight on the Y axis, and the stacked variable b
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Lesson Objectives</strong></p>
+<ul>
+<li>Describe what 0-based indexing is.</li>
+<li>Manipulate and extract data using column headings and index locations.</li>
+<li>Employ slicing to select sets of data from a DataFrame.</li>
+<li>Employ label and integer-based indexing to select ranges of data in a dataframe.</li>
+<li>Reassign values within subsets of a DataFrame.</li>
+<li>Create a copy of a DataFrame.</li>
+<li>Query / select a subset of data using a set of criteria using the following operators: ==, !=, &gt;, &lt;, &gt;=, &lt;=.</li>
+<li>Locate subsets of data using masks.</li>
+<li>Describe BOOLEAN objects in Python and manipulate data using BOOLEANs.</li>
+</ul>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
@@ -16469,7 +16508,7 @@ During handling of the above exception, another exception occurred:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Slicing using the [] operator selects a set of rows and/or columns from a DataFrame. To slice out a set of rows, you use the following syntax: data[start:stop]. When slicing in pandas the start bound is included in the output. The stop bound is one step BEYOND the row you want to select. So if you want to select rows 0, 1 and 2 your code would look like this:</p>
+<p><em>Slicing using the <strong>[ ]</strong> operator selects a set of rows and/or columns from a DataFrame. To slice out a set of rows, you use the following syntax: <strong>data[start:stop]</strong>. When slicing in pandas the start bound is included in the output. The stop bound is one step BEYOND the row you want to select. So if you want to select rows 0, 1 and 2 your code would look like this:</em></p>
 
 </div>
 </div>
@@ -16815,8 +16854,8 @@ During handling of the above exception, another exception occurred:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You might think that the code ref_surveys_df = surveys_df creates a fresh distinct copy of the surveys_df DataFrame object. However, using the = operator in the simple statement y = x does not create a copy of our DataFrame. Instead, y = x creates a new variable y that references the same object that x refers to. To state this another way, there is only one object (the DataFrame), and both x and y refer to it.</p>
-<p>In contrast, the copy() method for a DataFrame creates a true copy of the DataFrame.</p>
+<p><em>You might think that the code <strong>ref_surveys_df = surveys_df</strong> creates a fresh distinct copy of the surveys_df DataFrame object. However, using the <strong>=</strong> operator in the simple statement <strong>y = x</strong> does not create a copy of our DataFrame. Instead, <strong>y = x</strong> creates a new variable <strong>y</strong> that references the same object that <strong>x</strong> refers to. To state this another way, there is only one object (the DataFrame), and both <strong>x</strong> and <strong>y</strong> refer to it.</em></p>
+<p><em>In contrast, the <strong>copy()</strong> method for a DataFrame creates a true copy of the DataFrame.</em></p>
 
 </div>
 </div>
@@ -18638,13 +18677,13 @@ Name: 0, dtype: object</pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can use the syntax below when querying data by criteria from a DataFrame. Experiment with selecting various subsets of the “surveys” data.</p>
+<p><em>We can use the syntax below when querying data by criteria from a DataFrame. Experiment with selecting various subsets of the “surveys” data.</em></p>
 <ul>
-<li>Equals: ==</li>
-<li>Not equals: !=</li>
-<li>Greater than, less than: &gt; or &lt;</li>
-<li>Greater than or equal to &gt;=</li>
-<li>Less than or equal to &lt;=</li>
+<li>Equals: <strong>==</strong></li>
+<li>Not equals: <strong>!=</strong></li>
+<li>Greater than, less than: <strong>&gt;</strong> or <strong>&lt;</strong></li>
+<li>Greater than or equal to <strong>&gt;=</strong></li>
+<li>Less than or equal to <strong>&lt;=</strong></li>
 </ul>
 
 </div>
@@ -19399,8 +19438,8 @@ Name: 0, dtype: object</pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A mask can be useful to locate where a particular subset of values exist or don’t exist - for example, NaN, or “Not a Number” values. To understand masks, we also need to understand BOOLEAN objects in Python.</p>
-<p>Boolean values include True or False.</p>
+<p><em>A mask can be useful to locate where a particular subset of values exist or don’t exist - for example, NaN, or “Not a Number” values. To understand masks, we also need to understand <strong>BOOLEAN</strong> objects in Python.</em></p>
+<p><em>Boolean values include <strong>True</strong> or <strong>False</strong>.</em></p>
 
 </div>
 </div>
@@ -20741,7 +20780,8 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Key-Points-from-Lesson-2:-Indexing,-Slicing-and-Subsetting-DataFrames-in-Python">Key Points from Lesson 2: Indexing, Slicing and Subsetting DataFrames in Python<a class="anchor-link" href="#Key-Points-from-Lesson-2:-Indexing,-Slicing-and-Subsetting-DataFrames-in-Python">&#182;</a></h4><ul>
+<p><strong>Key Points from Lesson 2: Indexing, Slicing and Subsetting DataFrames in Python</strong></p>
+<ul>
 <li>In Python, portions of data can be accessed using indices, slices, column headings, and condition-based subsetting.</li>
 <li>Python uses 0-based indexing, in which the first element in a list, tuple or any other data structure has an index of 0.</li>
 <li>Pandas enables common data exploration steps such as data indexing, slicing and conditional subsetting.</li>
@@ -21737,7 +21777,7 @@ dtype: int64</pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In many “real world” situations, the data that we want to use come in multiple files. We often need to combine these files into a single DataFrame to analyze the data. The pandas package provides various methods for combining DataFrames including <strong>merge</strong> and <strong>concat</strong>.</p>
+<p><em>In many “real world” situations, the data that we want to use come in multiple files. We often need to combine these files into a single DataFrame to analyze the data. The pandas package provides various methods for combining DataFrames including <strong>merge</strong> and <strong>concat</strong>.</em></p>
 
 </div>
 </div>
@@ -22169,7 +22209,7 @@ dtype: int64</pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When we concatenate DataFrames, we need to specify the axis. <strong>axis=0</strong> tells pandas to stack the second DataFrame UNDER the first one. It will automatically detect whether the column names are the same and will stack accordingly. <strong>axis=1</strong> will stack the columns in the second DataFrame to the RIGHT of the first DataFrame. To stack the data vertically, we need to make sure we have the same columns and associated column format in both datasets. When we stack horizontally, we want to make sure what we are doing makes sense (i.e. the data are related in some way).</p>
+<p><em>When we concatenate DataFrames, we need to specify the axis. <strong>axis=0</strong> tells pandas to stack the second DataFrame UNDER the first one. It will automatically detect whether the column names are the same and will stack accordingly. <strong>axis=1</strong> will stack the columns in the second DataFrame to the RIGHT of the first DataFrame. To stack the data vertically, we need to make sure we have the same columns and associated column format in both datasets. When we stack horizontally, we want to make sure what we are doing makes sense (i.e. the data are related in some way).</em></p>
 
 </div>
 </div>
@@ -26483,13 +26523,6 @@ Create a new DataFrame by joining the contents of the surveys.csv and species.cs
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Need-to-Revisit-^^^">Need to Revisit ^^^<a class="anchor-link" href="#Need-to-Revisit-^^^">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Key Points from Lesson 4: Combining DataFrames with Pandas</strong></p>
 <ul>
 <li>Pandas’ merge and concat can be used to combine subsets of a DataFrame, or even data from different files.</li>
@@ -28072,7 +28105,8 @@ One keyword, default start:	 1977 1993
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Key-Points">Key Points<a class="anchor-link" href="#Key-Points">&#182;</a></h4><ul>
+<p><strong>Key Points from Lesson 5: Data Workflows and Automation</strong></p>
+<ul>
 <li>Loops help automate repetitive tasks over sets of items.</li>
 <li>Loops combined with functions provide a way to process data more efficiently than we could by hand.</li>
 <li>Conditional statements enable execution of different operations on different data.</li>
