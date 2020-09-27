@@ -4,54 +4,9 @@ output: html_document
 
 # Data Wrangling and Graphing COVID-19 Reporting Data (Part 1)
 
-```{r}
-library(tidyverse)
-
-# Read csv file into R
-report_03_11_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-11-2020.csv")) %>%
-  rename(Country_Region = "Country/Region", Province_State = "Province/State")
-
-```
-
-```{r}
-
-# Check table properties
-str(report_03_11_2020)
-
-```
-
-```{r}
-
-# Inspect the data frame
-head(report_03_11_2020)
-
-```
-
-### Interactive Data Tables
-
-You can make an interactive data table with the [DT package](https://rstudio.github.io/DT/).
-
-```{r}
-
-# Make an interactive data table with the DT package
-library(DT)
-datatable(report_03_11_2020)
-
-```
-
 ## Exercise Challenges (Part 1)
 
-Use the DT package for showing the data tables where appropriate.
-
-  1. The format of the daily reports has changed over time. What are the differences between 3/12/2020, the Friday before spring break 2020 and yesterday 6 months later on 9/12/2020? Load the files into R and use str() and View() (or in the top right corner click on Environment and then the data frame.). Note the in the more recent dates they have changed the column headers so that it is no longer necessary to rename Province_State and Country_Region.
-
-  2. Many countries have multiple entries representing different regions (e.g. counties and states). To get the counts for a country we need to summarise the data. Use group_by() and summarize() to make a data frame (tibble) with total counts for each country.
-
-  3. To get counts for confirmed cases per U.S state use filter() to select US and group_by and summarize as above.
-
-  4. It will be difficult to make simple graphs with the data from all countries in the world or even the US states. Use arrange_by() and slice() to get just the top 10 countries for Deaths.
-
-### Exercise (Part 1) - Challenge 1
+### Challenge Exercise 1
 
 The format of the daily reports has changed over time. What are the differences between 3/12/2020, the Friday before spring break 2020 and yesterday 6 months later on 9/12/2020? Load the files into R and use str() and View() (or in the top right corner click on Environment and then the data frame.). Note the in the more recent dates they have changed the column headers so that it is no longer necessary to rename Province_State and Country_Region.
 
@@ -81,7 +36,7 @@ str(report_09_12_2020)
 
 **There are far fewer countries/provinces/states in the March compared to September dataframe, indicating that SARS-CoV-2 spread and/or testing became more available worldwide over the 6 month period.**
 
-### Exercises (Part 1) - Challenge 2
+### Challenge Exercise 2
 
 Many countries have multiple entries representing different regions (e.g. counties and states). To get the counts for a country we need to summarise the data. Use group_by() and summarize() to make a data frame (tibble) with total counts for each country.
 
@@ -113,7 +68,7 @@ datatable(sum)
 
 ```
 
-### Exercises (Part 1) - Challenge 3
+### Challenge Exercise 3
 
 To get counts for confirmed cases per U.S state use filter() to select US and group_by and summarize as above.
 
@@ -147,7 +102,7 @@ datatable(sum)
 
 ```
 
-### Exercises (Part 1) - Challenge 4
+### Challenge Exercise 4
 
 It will be difficult to make simple graphs with the data from all countries in the world or even the US states. Use arrange_by() and slice() to get just the top 10 countries for Deaths.
 
@@ -181,13 +136,9 @@ datatable(sum)
 
 ```
 
-## Exercises Challenges (Part 2)
+## Challenge Exercises (Part 2)
 
-1. Make plots using geom_point() of the 10 countries with the confirmed cases and deaths (two separate graphs) on 3/12/2020 and 9/12/2020.
-
-2. Make using geom_bar of the 10 states with the most confirmed cases and deaths (two separate graphs) on 3/12/2020 and 9/12/2020.
-
-### Exercises (Part 2) - Challenge 1
+### Challenge Exercise 1
 
 Make plots using geom_point() of the 10 countries with the confirmed cases and deaths (two separate graphs) on 3/12/2020 and 9/12/2020.
 
@@ -227,7 +178,7 @@ ggplot(sum, aes(x=Country_Region, y=total_deaths)) +
 
 ```
 
-### Exercises (Part 1) - Challenge 2
+### Challenge Exercise 2
 
 Make using geom_bar of the 10 states with the most confirmed cases and deaths (two separate graphs) on 3/12/2020 and 9/12/2020.
 
@@ -269,211 +220,6 @@ ggplot(sum, aes(x=Country_Region, y=total_deaths)) +
 
 # Data Wrangling and Graphing COVID-19 Reporting Data (Part 2)
 
-```{r}
-
-library(tidyverse)
-
-Confirmed_State_3_13 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-13-2020.csv")) %>%
-  rename(Country_Region = "Country/Region", Province_State = "Province/State") %>% 
-  filter (Country_Region == "US") %>% 
-  group_by(Province_State, Country_Region) %>% 
-  summarise(Confirmed = sum(Confirmed))
-
-str(Confirmed_State_3_13)
-
-```
-
-
-```{r}
-
-library(tidyverse)
-
-Confirmed_State_9_13 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-13-2020.csv")) %>% 
-  filter (Country_Region == "US") %>% 
-  group_by(Province_State, Country_Region) %>% 
-  summarise(Confirmed = sum(Confirmed)) 
-
-str(Confirmed_State_9_13)
-
-```
-
-**Notice from the above `str’ calls that there are 53 states in the table on 3/13/2020 and 58 states in the table on 9/13/2020**
-
-```{r}
-
-setdiff(Confirmed_State_9_13$Province_State, Confirmed_State_3_13$Province_State)
-
-```
-
-```{r}
-
-Confirmed_State_9_13 <- Confirmed_State_9_13 %>% 
-  filter(Province_State != "Recovered") 
-
-```
-
-```{r}
-
-Confirmed_State_3_13_9_13_joined <- full_join(Confirmed_State_3_13, Confirmed_State_9_13, by = c("Province_State"))
-head(Confirmed_State_3_13_9_13_joined)
-
-```
-
-```{r}
-
-tail(Confirmed_State_3_13_9_13_joined, 5)
-
-```
-
-```{r}
-
-which(is.na(Confirmed_State_3_13_9_13_joined))
-
-```
-
-```{r}
-
-Confirmed_State_3_13_9_13_joined <- full_join(Confirmed_State_3_13, Confirmed_State_9_13, by = c("Province_State")) %>% 
-      rename(Confirmed_3_13_2020 = "Confirmed.x", Confirmed_9_13_2020 = "Confirmed.y") %>% 
-      select(-Country_Region.x, -Country_Region.y) %>% 
-      replace_na(list(Confirmed_3_13_2020 = 0))
-head(Confirmed_State_3_13_9_13_joined)
-
-```
-
-```{r}
-
-which(is.na(Confirmed_State_3_13_9_13_joined))
-
-```
-
-### Switching between long and wide formats
-
-```{r}
-
-Confirmed_State_3_13_9_13_joined_long <- Confirmed_State_3_13_9_13_joined %>% 
-              pivot_longer(-c(Province_State), names_to = "Date", values_to = "Confirmed")
-head(Confirmed_State_3_13_9_13_joined_long)
-
-```
-
-```{r}
-
-Confirmed_State_3_13_9_13_joined_long <- Confirmed_State_3_13_9_13_joined %>% 
-              gather(key="Date", value="Confirmed", 2:length(.))
-head(Confirmed_State_3_13_9_13_joined_long)
-
-```
-
-```{r fig.width=5, fig.height=10}
-
-library(ggplot2)
-ggplot(Confirmed_State_3_13_9_13_joined_long, aes(x = Confirmed,  y = Province_State))  + 
-    geom_point(aes(color = Date))
-
-```
-
-### Working with Time Series Data
-
-```{r}
-
-library(tidyverse)
-
-time_series_confirmed <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")) %>%
-  rename(Province_State = "Province/State", Country_Region = "Country/Region")
-
-head(time_series_confirmed)
-
-```
-
-```{r}
-
-time_series_confirmed_long <- time_series_confirmed %>% 
-               gather(key="Date", value="Confirmed", 5:length(.))
-
-head(time_series_confirmed_long)
-```
-
-```{r}
-
-library(tidyverse)
-
-time_series_deaths <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")) %>%
-  rename(Province_State = "Province/State", Country_Region = "Country/Region")
-
-head(time_series_deaths)
-
-```
-
-```{r}
-
-time_series_deaths_long <- time_series_deaths %>% 
-               gather(key="Date", value="Deaths", 5:length(.))
-
-head(time_series_deaths_long)
-```
-
-#### Joining the Time Series Tables
-
-```{r}
-
-time_series_confirmed_long <- time_series_confirmed_long %>% 
-  unite(Key, Province_State, Country_Region, Date, sep = ".", remove = FALSE)
-head(time_series_confirmed_long)
-
-```
-
-```{r}
-
-time_series_deaths_long <- time_series_deaths_long %>% 
-  unite(Key, Province_State, Country_Region, Date, sep = ".") %>% 
-  select(Key, Deaths)
-
-head(time_series_deaths_long)
-
-```
-
-```{r}
-
-time_series_long_joined <- full_join(time_series_confirmed_long, time_series_deaths_long, by = c("Key")) %>% 
-  select(-Key)
-head(time_series_long_joined)
-
-```
-
-```{r}
-
-which(is.na(time_series_long_joined$Confirmed))
-
-```
-
-```{r}
-
-which(is.na(time_series_long_joined$Deaths))
-
-```
-
-```{r}
-
-library(lubridate)
-time_series_long_joined$Date <- lubridate::mdy(time_series_long_joined$Date)
-head(time_series_long_joined)
-
-```
-
-```{r}
-
-time_series_long_joined_counts <- time_series_long_joined %>% 
-  gather(key="Report_Type", value="Counts", 6:length(.))
-
-head(time_series_long_joined_counts)
-
-```
-
-### Making Graphs with Time Series Data
-
-
-
 ## Challenge Exercises
 
 ### Challenge Exercise 1
@@ -504,14 +250,6 @@ Confirmed_9_13 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData
 
 
 head(Confirmed_9_13)
-
-```
-
-```{r}
-
-Confirmed_6_13_9_13 <- bind_rows(Confirmed_6_13, Confirmed_9_13) %>%
-  gather(key="Report_Type", value="Count", 4:length(.)) %>%
-  filter(Country_region)
 
 ```
 
