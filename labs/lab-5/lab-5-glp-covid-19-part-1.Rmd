@@ -1,0 +1,139 @@
+---
+output: html_document
+---
+
+# Data Wrangling and Graphing COVID-19 Reporting Data (Part 1)
+
+## Exercise Challenges (Part 1)
+
+### Challenge Exercise 1
+
+The format of the daily reports has changed over time. What are the differences between 3/12/2020, the Friday before spring break 2020 and yesterday 6 months later on 9/12/2020? Load the files into R and use str() and View() (or in the top right corner click on Environment and then the data frame.). Note the in the more recent dates they have changed the column headers so that it is no longer necessary to rename Province_State and Country_Region.
+
+```{r}
+
+library(tidyverse)
+
+# Read csv file into R
+report_03_12_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-12-2020.csv")) %>%
+  rename(Country_Region = "Country/Region", Province_State = "Province/State")
+
+report_09_12_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-12-2020.csv"))
+
+```
+
+```{r}
+
+str(report_03_12_2020)
+
+```
+
+```{r}
+
+str(report_09_12_2020)
+
+```
+
+**There are far fewer countries/provinces/states in the March compared to September dataframe, indicating that SARS-CoV-2 spread and/or testing became more available worldwide over the 6 month period.**
+
+### Challenge Exercise 2
+
+Many countries have multiple entries representing different regions (e.g. counties and states). To get the counts for a country we need to summarise the data. Use group_by() and summarize() to make a data frame (tibble) with total counts for each country.
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_03_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_confirmed_cases=sum(Confirmed),
+            total_deaths=sum(Deaths))
+
+library(DT)
+datatable(sum)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_09_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_confirmed_cases=sum(Confirmed),
+            total_deaths=sum(Deaths))
+
+library(DT)
+datatable(sum)
+
+```
+
+### Challenge Exercise 3
+
+To get counts for confirmed cases per U.S state use filter() to select US and group_by and summarize as above.
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_03_12_2020 %>%
+  filter(Country_Region=="US") %>%
+  group_by(Province_State) %>%
+  summarize(total_confirmed_cases=sum(Confirmed),
+            total_deaths=sum(Deaths))
+
+library(DT)
+datatable(sum)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_09_12_2020 %>%
+  filter(Country_Region=="US") %>%
+  group_by(Province_State) %>%
+  summarize(total_confirmed_cases=sum(Confirmed),
+            total_deaths=sum(Deaths))
+
+library(DT)
+datatable(sum)
+
+```
+
+### Challenge Exercise 4
+
+It will be difficult to make simple graphs with the data from all countries in the world or even the US states. Use arrange_by() and slice() to get just the top 10 countries for Deaths.
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_03_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_deaths=sum(Deaths)) %>%
+  arrange(desc(total_deaths)) %>%
+  slice(1:10)
+
+library(DT)
+datatable(sum)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_09_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_deaths=sum(Deaths)) %>%
+  arrange(desc(total_deaths)) %>%
+  slice(1:10)
+
+library(DT)
+datatable(sum)
+
+```
+
+
