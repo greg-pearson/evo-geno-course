@@ -2,3 +2,22 @@
 output: html_document
 ---
 
+# Lab 5 Extra: Interactive Graphs and Animations from the COVID-19 reporting data
+
+## Challenge Exercises
+
+Students in the 697 class need to complete the following challenges.
+
+### Challenge Exercise 1
+
+Print a graph (different from the one above) to a png file using 3*ppi for the height and width and display the png file in the report using the above R Markdown format.
+
+### Challenge Exercise 2
+
+Turn one of the exercises from Lab 5 into an interactive graph with plotyly.
+
+### Challenge Exercise 3
+
+Create an animated graph of your choosing using the time series data to display an aspect (e.g. states or countries) of the data that is important to you.
+
+
