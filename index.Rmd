@@ -21,6 +21,9 @@ output:
 
 - 4: [Lab 4 - Data Analysis and Visualization in Python](./labs/lab-4/lab-4-glp.html)
 
-- 5: [Lab 5](./labs/lab-5/lab-5-glp.html)
+- 5: 
+  a. [Lab 5 - Data wrangling and graphing COVID-19 reporting data (Part 1)](./labs/lab-5/lab-5-glp-covid-19-part-1.html)
+  b. [Lab 5 - Data wrangling and graphing COVID-19 reporting data (Part 2)](./labs/lab-5/lab-5-glp-covid-19-part-2.html)
+  c. [Lab 5 Extra - Interactive Graphs and Animations from the COVID-19 reporting data](./labs/lab-5/lab-5-glp-covid-19-extra.html)
 
 - 6: [Lab 6](./labs/lab-6/lab-6-glp.html)
