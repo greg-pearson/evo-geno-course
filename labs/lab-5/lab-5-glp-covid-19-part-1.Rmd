@@ -10,7 +10,7 @@ output: html_document
 
 The format of the daily reports has changed over time. What are the differences between 3/12/2020, the Friday before spring break 2020 and yesterday 6 months later on 9/12/2020? Load the files into R and use str() and View() (or in the top right corner click on Environment and then the data frame.). Note the in the more recent dates they have changed the column headers so that it is no longer necessary to rename Province_State and Country_Region.
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 library(tidyverse)
 
@@ -22,13 +22,13 @@ report_09_12_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISan
 
 ```
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 str(report_03_12_2020)
 
 ```
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 str(report_09_12_2020)
 
@@ -136,4 +136,97 @@ datatable(sum)
 
 ```
 
+## Challenge Exercises (Part 2)
+
+### Challenge Exercise 5
+
+Make plots using geom_point() of the 10 countries with the confirmed cases and deaths (two separate graphs) on 3/12/2020 and 9/12/2020.
+
+```{r message=FALSE, results='hide'}
+
+library(tidyverse)
+
+# Read csv file into R
+report_03_12_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-12-2020.csv")) %>%
+  rename(Country_Region = "Country/Region", Province_State = "Province/State")
+
+report_09_12_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-12-2020.csv"))
+
+```
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_03_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_deaths=sum(Deaths)) %>%
+  arrange(desc(total_deaths)) %>%
+  slice(1:10)
+
+library(ggplot2)
+ggplot(sum, aes(x=Country_Region, y=total_deaths)) +
+  geom_point() +
+  labs(x="Country", y="Deaths (03/12/2020)") +
+  theme_classic()
+
+```
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_09_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_deaths=sum(Deaths)) %>%
+  arrange(desc(total_deaths)) %>%
+  slice(1:10)
+
+library(ggplot2)
+ggplot(sum, aes(x=Country_Region, y=total_deaths)) +
+  geom_point() +
+  labs(x="Country", y="Deaths (09/12/2020)") +
+  theme_classic()
+
+```
+
+### Challenge Exercise 6
+
+Make using geom_bar of the 10 states with the most confirmed cases and deaths (two separate graphs) on 3/12/2020 and 9/12/2020.
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_03_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_deaths=sum(Deaths)) %>%
+  arrange(desc(total_deaths)) %>%
+  slice(1:10)
+
+library(ggplot2)
+ggplot(sum, aes(x=Country_Region, y=total_deaths)) +
+  geom_bar(stat="identity") +
+  labs(x="Country", y="Deaths (03/12/2020)") +
+  theme_classic()
+
+```
+
+```{r}
+
+library(tidyverse)
+
+sum <- report_09_12_2020 %>%
+  group_by(Country_Region)%>%
+  summarize(total_deaths=sum(Deaths)) %>%
+  arrange(desc(total_deaths)) %>%
+  slice(1:10)
+
+library(ggplot2)
+ggplot(sum, aes(x=Country_Region, y=total_deaths)) +
+  geom_bar(stat="identity") +
+  labs(x="Country", y="Deaths (09/12/2020)") +
+  theme_classic()
+
+```
 
