@@ -4,20 +4,171 @@ output: html_document
 
 # Lab 5 Extra: Interactive Graphs and Animations from the COVID-19 reporting data
 
+More information related to this lab can be found [here](https://jeffreyblanchard.github.io/EvoGeno/EvoGeno_Lab5x_interactive_graphs.html).
+
 ## Challenge Exercises
 
 Students in the 697 class need to complete the following challenges.
 
 ### Challenge Exercise 1
 
-Print a graph (different from the one above) to a png file using 3*ppi for the height and width and display the png file in the report using the above R Markdown format.
+Print a graph to a png file using 3*ppi for the height and width and display the png file in the report using the above R Markdown format.
+
+```{r}
+
+library(tidyverse)
+
+time_series_confirmed <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")) %>%
+  rename(Province_State = "Province/State", Country_Region = "Country/Region") %>%
+  mutate(report_type = "confirmed_cases") %>%
+  select(report_type, everything())
+
+head(time_series_confirmed)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+time_series_deaths <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")) %>%
+  rename(Province_State = "Province/State", Country_Region = "Country/Region") %>%
+  mutate(report_type = "confirmed_deaths") %>%
+  select(report_type, everything())
+
+head(time_series_deaths)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+time_series_joined <- bind_rows(time_series_confirmed, time_series_deaths) %>%
+  gather(key="date", value="count", 6:length(.)) %>%
+  mutate(date=lubridate::mdy(date)) %>%
+  spread(key="report_type", value="count") %>%
+  mutate(confirmed_cases=replace_na(confirmed_cases, 0),
+         confirmed_deaths=replace_na(confirmed_deaths, 0))
+
+head(time_series_joined)
+tail(time_series_joined)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+time_series_sum <- time_series_joined %>%
+  group_by(date) %>%
+  summarize(cases = sum(confirmed_cases),
+            deaths = sum(confirmed_deaths)) %>%
+  mutate(deaths_cases = deaths/cases)
+
+head(time_series_sum)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+time_series_sum <- time_series_joined %>%
+  filter(Country_Region=="US") %>%                      #| Filter only US Data
+  group_by(date) %>%
+  summarize(cases = sum(confirmed_cases),
+            deaths = sum(confirmed_deaths)) %>%
+  mutate(deaths_cases = deaths/cases)
+
+```
+
+
+```{r}
+
+ppi=300
+
+library(ggplot2)
+
+p1 <- ggplot(time_series_sum, aes(x=date, y=deaths_cases)) +
+  geom_line() +
+  labs(x="", y="Deaths/Cases", title="Fatality Rate in the U.S.") +
+  theme_linedraw() +
+  theme(plot.title=element_text(face="bold", hjust=0.5),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank())
+
+png("/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/fatality-rate-in-the-usa-plot.png", 
+    width=3*ppi, height=3*ppi, res=ppi)
+
+p1
+
+dev.off()
+
+```
+
+![](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/fatality-rate-in-the-usa-plot.png)
 
 ### Challenge Exercise 2
 
 Turn one of the exercises from Lab 5 into an interactive graph with plotyly.
 
+```{r}
+
+library(ggplot2)
+library(plotly)
+
+p1 <- ggplot(time_series_sum, aes(x=date, y=deaths_cases)) +
+  geom_line() +
+  labs(x="", y="Deaths/Cases", title="Fatality Rate in the U.S.") +
+  theme_linedraw() +
+  theme(plot.title=element_text(face="bold", hjust=0.5),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank())
+
+ggplotly(p1)
+```
+
 ### Challenge Exercise 3
 
 Create an animated graph of your choosing using the time series data to display an aspect (e.g. states or countries) of the data that is important to you.
 
+```{r}
+
+library(tidyverse)
+
+time_series_confirmed <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")) %>%
+  select(7:length(.)) %>%
+  gather(key="date", value="cases", 6:length(.)) %>%
+  mutate(date = lubridate::mdy(date)) %>%
+  group_by(date, Province_State) %>%
+  summarize(total_cases = sum(cases)) %>%
+  filter(Province_State %in% c("Pennsylvania", "Washington", "Massachusetts"))
+
+head(time_series_confirmed)
+
+```
+
+
+```{r}
+
+library(ggplot2)
+library(gganimate)
+library(transformr)
+library(gifski)
+
+p1 <- ggplot(time_series_confirmed, aes(x=date, y=total_cases)) +
+  labs(x="", y="confirmed cases", title="COVID-19 Cases by State") +
+  geom_line(aes(color=Province_State)) +
+  theme_linedraw() +
+  theme(plot.title=element_text(face="bold", hjust=0.5),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        legend.position="bottom",
+        legend.title=element_blank()) +
+  transition_reveal(date)
+
+animate(p1, renderer = gifski_renderer(), end_pause = 15)
+
+```
 
