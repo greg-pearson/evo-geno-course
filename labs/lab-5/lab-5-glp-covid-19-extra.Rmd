@@ -14,7 +14,7 @@ Students in the 697 class need to complete the following challenges.
 
 Print a graph to a png file using 3*ppi for the height and width and display the png file in the report using the above R Markdown format.
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 library(tidyverse)
 
@@ -27,7 +27,7 @@ head(time_series_confirmed)
 
 ```
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 library(tidyverse)
 
@@ -40,7 +40,7 @@ head(time_series_deaths)
 
 ```
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 library(tidyverse)
 
@@ -56,7 +56,7 @@ tail(time_series_joined)
 
 ```
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 library(tidyverse)
 
@@ -70,7 +70,7 @@ head(time_series_sum)
 
 ```
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 library(tidyverse)
 
@@ -84,7 +84,7 @@ time_series_sum <- time_series_joined %>%
 ```
 
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 ppi=300
 
@@ -113,7 +113,7 @@ dev.off()
 
 Turn one of the exercises from Lab 5 into an interactive graph with plotyly.
 
-```{r}
+```{r message=FALSE}
 
 library(ggplot2)
 library(plotly)
@@ -133,7 +133,7 @@ ggplotly(p1)
 
 Create an animated graph of your choosing using the time series data to display an aspect (e.g. states or countries) of the data that is important to you.
 
-```{r}
+```{r message=FALSE, results='hide'}
 
 library(tidyverse)
 
