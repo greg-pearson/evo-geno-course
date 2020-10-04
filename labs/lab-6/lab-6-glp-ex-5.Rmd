@@ -3,27 +3,17 @@ output: html_document
 bibliography: "/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/data/my-zotero-library.bib"
 ---
 
-Create a report with static maps and interactive graphs that is meant to be read by others (e.g. your friends and family). Hide warnings, messages and even the code you used so that it is readable. Included references. Link to the Lab 10 report from your Github site. Submit the link to Moodle. animations that is meant to be read by others (e.g. your friends and family). Hide warnings, messages and even the code you used so that it is readable. Included references. Link to the Lab 6 report from your Github site. Submit the link to Moodle.
-
-All data was retrieved from the [GitHub Repo for Novel Coronavirus (COVID-19) Cases](https://jeffreyblanchard.github.io/EvoGeno/EvoGeno_Lab4_covid.html) [@dong2020tlid].
-
-
 # Lab 6 - Data Maps, Interactive Graphs and Animations from the COVID-19 reporting data
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+All data was retrieved from the [GitHub Repo for Novel Coronavirus (COVID-19) Cases](https://github.com/CSSEGISandData/COVID-19) [@dong2020tlid].
 
-library(tidyverse)
-library(maps)
-library(mapdata)
-library(lubridate)
-library(viridis)
-library(wesanderson)
-
-```
-
-## Challenge Exercises
+All data wrangling and visualization was completed in R [@rcoreteam2019].
 
 ### Challenge Exercise 1
+
+For the above graph “COVID-19 Deaths” summarize the counts for each Country on the graph and update the graph to 9/26/2020. You are doing some real life data wrangling. Data is not always in the form that you expected, so it is important to check what the results of each step are. You can summarize the counts for each country and find the median Lat and Long as a way of summarize the Lat and Long from each state. However, the US and several other countries do not have counts. This is because for some US (and other countries) the Lat and Long are NA. One strategies is to simply remove this data (which is fine for this class).
+
+Using the mean or median(Lat) and (Long) is still not perfect. Some countries are still centered in the ocean. This is ok for ex1. You can use ggplotly to help trouble shoot by putting the Country_Region as text in the hover box
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 
@@ -31,11 +21,11 @@ library(tidyverse)
 
 daily_report <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
   rename(Long = "Long_") %>%
-  select(3:4, 6:8) %>%
-  group_by(Country_Region, Lat, Long) %>%
-  summarize(sum_confirm = sum(Confirmed))
-
-head(daily_report)
+  filter(Lat != "NA" & Long != "NA") %>%
+  group_by(Country_Region) %>% 
+  summarize(Lat = median(Lat),
+            Long = median(Long),
+            Deaths = sum(Deaths))
 
 ```
 
@@ -43,23 +33,25 @@ head(daily_report)
 
 library(ggplot2)
 
-ggplot(daily_report, aes(x = Long, y = Lat, size = sum_confirm/100000)) +
-    borders("world", colour = NA, fill = "grey90") +
-    theme_bw() +
-    geom_point(shape = 21, color='purple', fill='purple', alpha = 0.5) +
-    labs(title = 'World COVID-19 Confirmed cases',x = '', y = '',
-        size="Cases (x100,000))") +
-    theme(legend.position = "right",
-          plot.title = element_text(face="bold", hjust=0.5)) +
-    coord_fixed(ratio=1.5)
+plotly::ggplotly(
+ggplot(data = daily_report, mapping = aes(x = Long, y = Lat, text = Country_Region, size = Deaths/1000)) + 
+  borders("world", colour = NA, fill = "grey90") +
+  theme_bw() +
+  geom_point(shape = 21, color='purple', fill='purple', alpha = 0.5) +
+  labs(title = 'COVID-19 Deaths',x = '', y = '', size="Deaths (x1000))") +
+  theme(legend.position = "right") +
+  coord_fixed(ratio=1.5)
+)
 
 ```
+
+
 
 ### Challenge Exercise 2
 
 Update Anisa Dhana’s graph layout of the US to 9/26/2020. You may need to adjust the size of the points.
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 
 library(tidyverse)
 
@@ -72,34 +64,33 @@ daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData
                   "District of Columbia", "Diamond Princess")) %>% 
   filter(Lat > 0)
 
-head(daily_report)
-
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, echo=FALSE}
 
 library(ggplot2)
 
 mybreaks <- c(1, 100, 1000, 10000, 100000)
+
 ggplot(daily_report, aes(x = Long, y = Lat, size = Confirmed)) +
-    borders("state", colour = "white", fill = "grey90") +
-    geom_point(aes(x=Long, y=Lat, size=Confirmed, color=Confirmed),stroke=F, alpha=0.7) +
-    scale_size_continuous(name="Cases", trans="log", range=c(1,7), 
-                        breaks=mybreaks, labels = c("1-99", "100-999", "1,000-9,999", "10,000-99,999", "100,000+")) +
-    scale_color_viridis_c(option="viridis",name="Cases",
-                        trans="log", breaks=mybreaks, labels = c("1-99", "100-999", "1,000-9,999", "10,000-99,999", "100,000+"))  +
+  borders("state", colour = "white", fill = "grey90") +
+  geom_point(aes(x=Long, y=Lat, size=Confirmed, color=Confirmed),stroke=F, alpha=0.7) +
+  scale_size_continuous(name="Cases", trans="log", range=c(1,7), 
+                        breaks=mybreaks, 
+                        labels = c("1-99", "100-999", "1,000-9,999", "10,000-99,999", "100,000+")) +
+  scale_color_viridis_c(option="viridis",name="Cases",
+                        trans="log", breaks=mybreaks, 
+                        labels = c("1-99", "100-999", "1,000-9,999", "10,000-99,999", "100,000+"))  +
   theme_void() + 
-    guides( colour = guide_legend()) +
-    labs(title = "COVID-19 Confirmed Cases in the US'") +
-    theme(
-      legend.position = "bottom",
-      text = element_text(color = "#22211d"),
-      plot.background = element_rect(fill = "#ffffff", color = NA), 
-      panel.background = element_rect(fill = "#ffffff", color = NA), 
-      legend.background = element_rect(fill = "#ffffff", color = NA),
-      plot.title = element_text(face="bold", hjust=0.5)
-    ) +
-    coord_fixed(ratio=1.5)
+  guides(colour = guide_legend()) +
+  labs(title = "COVID-19 Confirmed Cases in the US'") +
+  theme(legend.position = "bottom",
+        text = element_text(color = "#22211d"),
+        plot.background = element_rect(fill = "#ffffff", color = NA), 
+        panel.background = element_rect(fill = "#ffffff", color = NA), 
+        legend.background = element_rect(fill = "#ffffff", color = NA),
+        plot.title = element_text(face="bold", hjust=0.5)) +
+  coord_fixed(ratio=1.5)
 
 ```
 
@@ -107,9 +98,10 @@ ggplot(daily_report, aes(x = Long, y = Lat, size = Confirmed)) +
 
 Update the graph “Number of Confirmed Cases by US County” to 9/26/2020 and use a different color scheme or theme
 
-```{r message=FALSE, results='hide'}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 
-# Get and format the covid report data
+library(tidyverse)
+
 report_09_26_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
   rename(Long = "Long_") %>% 
   unite(Key, Admin2, Province_State, sep = ".") %>% 
@@ -117,7 +109,6 @@ report_09_26_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISan
   summarize(Confirmed = sum(Confirmed)) %>% 
   mutate(Key = tolower(Key))
 
-# dim(report_03_27_2020)
 # get and format the map data
 us <- map_data("state")
 counties <- map_data("county") %>% 
@@ -125,24 +116,20 @@ counties <- map_data("county") %>%
 
 # Join the 2 tibbles
 state_join <- left_join(counties, report_09_26_2020, by = c("Key"))
-# sum(is.na(state_join$Confirmed))
 
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, echo=FALSE}
 
 options(scipen=999)
 
 library(ggplot2)
-library(RColorBrewer)
-# To display only colorblind-friendly brewer palettes, specify the option colorblindFriendly = TRUE as follow:
-# display.brewer.all(colorblindFriendly = TRUE)
 
 ggplot(data = us, mapping = aes(x = long, y = lat, group = group)) + 
   coord_fixed(1.3) +
   borders("state", colour = "black") +
   geom_polygon(data = state_join, aes(fill = Confirmed)) +
-  scale_fill_gradientn(colors = brewer.pal(n = 5, name = "BuPu"),
+  scale_fill_gradientn(colors = RColorBrewer::brewer.pal(n = 5, name = "BuPu"),
                        breaks = c(1, 10, 100, 1000, 10000, 100000, 1000000),
                        trans = "log10", na.value = "White") +
   ggtitle("Number of Confirmed Cases by US County") +
@@ -156,7 +143,7 @@ ggplot(data = us, mapping = aes(x = long, y = lat, group = group)) +
 
 Make an interactive plot using a state of your chosing using a theme different from used in the above examples.
 
-```{r message=FALSE, results='hide'}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 
 daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
   rename(Long = "Long_") %>% 
@@ -172,17 +159,16 @@ state_join <- left_join(wa_county, daily_report, by = c("subregion" = "Admin2"))
 
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, echo=FALSE}
 
-library(plotly)
-ggplotly(
+library(ggplot2)
+
+plotly::ggplotly(
   ggplot(data = wa_county, mapping = aes(x = long, y = lat, group = group)) + 
   coord_fixed(1.3) + 
-# Add data layer
   geom_polygon(data = state_join, aes(fill = Confirmed), color = "black") +
-    scale_fill_gradientn(colours = wes_palette("Royal1", 100, type = "continuous")) +
+    scale_fill_gradientn(colours = wesanderson::wes_palette("Royal1", 100, type = "continuous")) +
   ggtitle("COVID-19 Cases in WA") +
-# Cleaning up the graph
   labs(x=NULL, y=NULL) +
   theme(panel.border = element_blank()) +
   theme(panel.background = element_blank()) +
@@ -193,6 +179,7 @@ ggplotly(
 
 ```
 
+#### References
 
 
 
