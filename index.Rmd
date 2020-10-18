@@ -28,4 +28,4 @@ output:
   a. [Lab 6 - Data Maps, Interactive Graphs and Animations from the COVID-19 reporting data](./labs/lab-6/lab-6-glp.html)
   b. [Lab 6 - Exercise 5 Report](./labs/lab-6/lab-6-glp-ex-5.html)
 
-- 7: [Lab 7: RNA Seq Workflow](.labs/lab-7/lab-7-glp.html)
+- 7: [Lab 7: RNA Seq Workflow](./labs/lab-7/lab-7-glp.html)
