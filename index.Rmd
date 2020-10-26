@@ -29,3 +29,5 @@ output:
   b. [Lab 6 - Exercise 5 Report](./labs/lab-6/lab-6-glp-ex-5.html)
 
 - 7: [Lab 7: RNA Seq Workflow](./labs/lab-7/lab-7-glp.html)
+
+- 8: [Lab 8: Sequence Alignment, Phylogenetic Analysis, and Tree Visualization](./labs/lab-8/lab-8-glp.html)
