@@ -2,9 +2,12 @@
 output: html_document
 ---
 
-### Exercises
+# Lab 8: Sequence Alignment, Phylogenetic Analysis and Tree Visualization
 
-1. Use NGPhylogeny.fr to analyze the set of rRNA sequence provided. Describe the methods and put the .png file from your analysis into your Lab 8 .Rmd file
+## Exercises
+
+### Exercise 1
+Use NGPhylogeny.fr to analyze the set of rRNA sequence provided. Describe the methods and put the .png file from your analysis into your Lab 8 .Rmd file
 
 #### Steps
 - Go to https://ngphylogeny.fr/
@@ -16,9 +19,10 @@ output: html_document
 
 ![](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/Tree_image.png)
 
-2. Align and do phylogenetic analysis off the sequences in CIPRES using MAFFT and FastTreeMP. You will need to click on Parameter Set and Save even if you don’t change the parameters. Download the fastree_result.tre to your computer. Put the resulting tree file in your .Rmd file
+### Exercise 2
+Align and do phylogenetic analysis off the sequences in CIPRES using MAFFT and FastTreeMP. You will need to click on Parameter Set and Save even if you don’t change the parameters. Download the fastree_result.tre to your computer. Put the resulting tree file in your .Rmd file
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 
 library(tidyverse)
 library(ggtree)
@@ -38,7 +42,9 @@ ggtree(tree) +
 ```
 
 
-3. Go through the tutorial on [Visualizing and Annotating Phylogenetic Trees with R+ggtree](https://4va.github.io/biodatasci/r-ggtree.html) adding the steps to your .Rmd file.
+### Exercise 3
+
+Go through the tutorial on [Visualizing and Annotating Phylogenetic Trees with R+ggtree](https://4va.github.io/biodatasci/r-ggtree.html) adding the steps to your .Rmd file.
 
 #### Upload tidyverse and ggtree packages and download tree data
 ```{r}
@@ -377,7 +383,7 @@ ggtree(tree, layout="circular") +
 
 #### Upload influenza data file from beast and create ggtree of data 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 
 library(treeio)
 
@@ -470,7 +476,9 @@ p
 ```
 
 
-4. Upload your tree file from the FastTreeMP output on CIPRES. Color the tree according to the domains of life. Upload a circular version of the tree to your notebook.
+### Exercise 4
+
+Upload your tree file from the FastTreeMP output on CIPRES. Color the tree according to the domains of life. Upload a circular version of the tree to your notebook.
 
 ```{r}
 
