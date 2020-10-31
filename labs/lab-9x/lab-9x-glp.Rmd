@@ -1,0 +1,418 @@
+---
+output: html_document
+---
+
+# Lab 9x: Programming in R - Control Structures and Functions
+
+## Control structures
+- if and else: testing a condition and acting on it
+- for: execute a loop a fixed number of times
+- while: execute a loop while a condition is true
+
+Control structures are generally used when writing functions (not alone).
+
+### Conditional statements with if-else
+
+#### Example of an else-if structure
+##### Original
+```{r}
+
+## Generate a uniform random number for x
+x <- runif(1, 0, 10)
+
+##  Create an if-else structure where y will equal 10 or 0 depending on the number that is randomly generated for x
+if(x > 3) {
+        y <- 10
+} else {
+        y <- 0
+}
+
+x
+y
+
+```
+
+##### Modified
+```{r}
+
+## Generate a uniform random number for x
+x <- runif(1, 0, 10)
+
+##  As a proof a concept since the random number generator cannot generate a number > 10, the y will equal the second argument which is 0
+if(x > 10) {
+        y <- 10
+} else {
+        y <- 0
+}
+
+x
+y
+
+```
+
+
+
+### for Loops
+#### Example
+##### Original
+```{r}
+
+for(i in 1:10) {
+        print(i)
+}
+
+```
+
+##### Modified
+```{r}
+
+## Modified version of above example
+for(i in 1:10) {
+        print(i^2)
+}
+
+```
+
+#### Example
+##### Original
+```{r}
+
+x <- c("a", "b", "c", "d")
+for(i in 1:4) {
+        ## Print out each element of 'x'
+        print(x[i])  
+}
+
+```
+
+##### Modified
+```{r}
+
+## Modified version of above example example
+x <- c("a", "b", "c", "d")
+for(i in 1:3) {
+        ## Print out first three elements of 'x'
+        print(x[i])  
+}
+
+```
+
+#### Example
+##### Original
+```{r}
+
+## Generate a sequence based on length of 'x'
+for(i in seq_along(x)) {   
+        print(x[i])
+}
+
+```
+
+##### Modified
+```{r}
+
+## Generate a sequence based on length of 'x' - 1
+for(i in seq_along(x)) {   
+        print(x[i - 1])
+}
+
+```
+
+#### Example
+##### Original
+```{r}
+
+for(letter in x) {
+        print(letter)
+}
+```
+
+##### Modified
+```{r}
+
+for(briefe in x) {
+        print(briefe)
+}
+```
+
+
+#### Example
+##### Original
+```{r}
+
+for(i in 1:4) print(x[i])
+
+```
+
+##### Modified
+```{r}
+
+for(i in 3:4) print(x[i])
+
+```
+
+### Nested for Loops
+#### Example
+##### Original
+```{r}
+
+x <- matrix(1:6, 2, 3)
+x
+
+for(i in seq_len(nrow(x))) {
+        for(j in seq_len(ncol(x))) {
+                print(x[i, j])
+        }   
+}
+
+```
+
+##### Modified
+```{r}
+
+x <- matrix(1:6, 2, 3)
+x
+
+## Print the first three digits in 'x' matrix since there are three columns ('j') in the matrix for a total of 6 lines
+for(i in seq_len(nrow(x))) {
+        for(j in seq_len(ncol(x))) {
+                print(x[j])
+        }   
+}
+
+```
+
+```{r}
+
+x <- matrix(1:6, 2, 3)
+x
+
+## Print the first two digits in 'x' matrix since there are three columns ('i') in the matrix for a total of 6 lines
+for(i in seq_len(nrow(x))) {
+        for(j in seq_len(ncol(x))) {
+                print(x[i])
+        }   
+}
+
+```
+
+### while Loops
+#### Example
+##### Original
+```{r}
+
+count <- 0
+while(count < 10) {
+        print(count)
+        count <- count + 1
+}
+
+```
+
+##### Modified
+```{r}
+
+## List count + 2 but stop when count is no longer less than 20
+count <- 5
+while(count < 20) {
+        print(count)
+        count <- count + 2
+}
+
+```
+
+#### Example
+##### Original
+```{r}
+
+z <- 5
+set.seed(1)
+while(z >= 3 && z <= 10) {
+        coin <- rbinom(1, 1, 0.5)
+        
+        if(coin == 1) {  ## random walk
+                z <- z + 1
+        } else {
+                z <- z - 1
+        } 
+}
+print(z)
+
+```
+
+##### Modified
+```{r}
+
+## when 'z' doesn't meet the conditions
+z <- 1
+set.seed(1)
+while(z >= 3 && z <= 10) {
+        coin <- rbinom(1, 1, 0.5)
+        
+        if(coin == 1) {  ## random walk
+                z <- z + 1
+        } else {
+                z <- z - 1
+        } 
+}
+print(z)
+
+coin
+```
+
+```{r}
+
+## since coin doesn't equal 1, 5 minus 6 equal -1
+z <- 5
+set.seed(1)
+while(z >= 3 && z <= 10) {
+        coin <- rbinom(1, 1, 0.5)
+        
+        if(coin == 1) {  ## random walk
+                z <- z + 1
+        } else {
+                z <- z - 6
+        } 
+}
+print(z)
+
+```
+
+
+## Functions
+#### Example
+##### Original
+```{r}
+
+f <- function() {
+        cat("Hello, world!\n")
+}
+
+f()
+```
+
+##### Modified
+```{r}
+
+fun <- function() {
+        cat("Hello, world!\n")
+}
+
+fun()
+```
+
+#### Example
+##### Original
+```{r}
+
+f <- function(num) {
+        for(i in seq_len(num)) {
+                cat("Hello, world!/n")
+                }
+}
+
+f(3)
+
+```
+
+##### Modified
+```{r}
+
+f <- function(num) {
+        for(i in seq_len(num)) {
+                cat("Hello, world!\n")
+                }
+}
+
+f(6)
+
+```
+
+#### Example
+##### Original
+```{r}
+
+f <- function(num) {
+        hello <- "Hello, world!\n"
+        for(i in seq_len(num)) {
+                cat(hello)
+        }
+        chars <- nchar(hello) * num
+        chars
+}
+
+meaningoflife <- f(3)
+
+print(meaningoflife)
+
+```
+
+##### Modified
+```{r}
+
+f <- function(num) {
+        hello <- "Hello!\n"
+        for(i in seq_len(num)) {
+                cat(hello)
+        }
+        chars <- nchar(hello) * num
+        chars
+}
+
+meaningoflife <- f(2)
+
+print(meaningoflife)
+
+```
+
+#### Example
+##### Original
+```{r}
+
+f <- function(num = 1) {
+        hello <- "Hello, world!\n"
+        for(i in seq_len(num)) {
+                cat(hello)
+        }
+        chars <- nchar(hello) * num
+        chars
+}
+
+f() ## Use default value for 'num'
+
+f(2)   ## Use user-specified value
+
+```
+
+##### Modified
+```{r}
+
+f <- function(num = 3) {
+        hello <- "Hello, world!\n"
+        for(i in seq_len(num)) {
+                cat(hello)
+        }
+        chars <- nchar(hello) * num
+        chars
+}
+
+f() ## Use default value for 'num'
+
+f(2)   ## Use user-specified value
+
+```
+
+#### Example
+##### Original
+```{r}
+
+f(num = 2)
+
+```
+
+##### Modified
+```{r}
+
+f(num = 4)
+
+```
