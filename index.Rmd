@@ -31,3 +31,7 @@ output:
 - 7: [Lab 7: RNA Seq Workflow](./labs/lab-7/lab-7-glp.html)
 
 - 8: [Lab 8: Sequence Alignment, Phylogenetic Analysis, and Tree Visualization](./labs/lab-8/lab-8-glp.html)
+
+- 9: [Lab 9: Programming in R - Regular Expressions](./labs/lab-9/lab-9-glp.html)
+
+- 9x: [Lab 9x: Programming in R - Control Structures and Functions](./labs/lab-9x/lab-9x-glp.html)
