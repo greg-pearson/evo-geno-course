@@ -1,0 +1,304 @@
+---
+output: html_document
+---
+
+# Lab 10: Population genomics based on high throughput sequencing (HTS)
+
+## Part I - Reading VCF data
+Genetic variation data is typically stored in variant call format (VCF). Advantage: only variants (e.g. SNPs, indels, etc.) are reported reducing the file size
+
+### VCF file structure
+VCF files have three sections: a vcf header, a fix region and a gt region.
+
+```{r}
+
+library(vcfR)
+
+```
+
+```{r}
+
+data(vcfR_example)
+vcf
+
+```
+
+### The meta region
+The meta region contains information about the file, its creation, and information to interpret abbreviations.
+```{r}
+
+strwrap(vcf@meta[1:7])
+
+```
+
+The function queryMETA() summarizes the meta information but only shows the vcfR object as a parameter.
+```{r}
+
+queryMETA(vcf)
+
+```
+
+In order to see a specific element of meta information, you need to use the 'element' argument.
+```{r}
+
+queryMETA(vcf, element = 'DP')
+
+```
+
+You can be even more specific with the 'element' you want to call.
+```{r}
+
+queryMETA(vcf, element = 'FORMAT=<ID=DP')
+
+```
+
+### The fix region
+The fix region contains information for each variant which is sometimes summarized over all samples.
+```{r}
+
+head(getFIX(vcf))
+
+```
+
+### The gt region
+The gt (genotype) region contains information about each variant for each sample.
+```{r}
+
+vcf@gt[1:6, 1:4]
+
+```
+
+### vcfR
+We can read VCF format files using the function read.vcfR() from the package 'vcfR'
+```{r}
+
+vcf <- read.vcfR("./data/lab-10-data/pinfsc50_filtered.vcf.gz")
+
+```
+
+```{r}
+
+head(vcf)
+
+```
+
+```{r}
+
+write.vcf(vcf, "./data/lab-10-data/myVCFdata_filtered.vcf.gz")
+
+```
+
+#### Exercises Part I
+    1. How would we find more information about read.vcfR()?
+        - by typing ?read.vcfR in the console or highlighting read.vcfR and then pressing fn and f4 buttons together
+    2. How would we learn what the acronym “AD” stands for?
+        - by using the element argument in the queryMETA() function
+    3. We used the head() function to view the first few lines of fix data. How would we view the last few lines of fix data?
+        - use the function tail()
+    4. There is a column in the fix portion of the data called QUAL. It is not defined in the meta portion of the data because it is defined in the VCF specification. It stands for ‘quality’. Does QUAL appear useful to us? Why or why not?
+        - 
+    5. How would we query the sample names?
+
+## Part II - Analysis of Genome Data
+### Opening and examining the dataset
+
+```{r}
+
+library('vcfR')
+vcf <- read.vcfR("./data/lab-10-data/pinfsc50_filtered.vcf.gz")
+# This data can also be download from the course repo - https://github.com/jeffreyblanchard/EvoGeno/blob/master/Grunwald/pinfsc50_filtered.vcf.gz
+
+vcf
+```
+
+### Converting VCF data to a genlight object
+The R package adegenet is a popular R package used for population genetic analysis and it works on data structures called 'genlight' objects. We can use the function vcfR2genlight() to convert our vcfR object to a genlight object. This allows us to analyze the VCF data using the adegenet package.
+```{r}
+
+library(adegenet)
+x <- vcfR2genlight(vcf)
+x
+
+```
+
+The warning message occurs because genlight objects support no more than two alleles. Conversely, variant call format can include many more alleles.
+```{r}
+
+# vcfR
+gt <- extract.gt(vcf, element = "GT")
+gt[c(2,6,18), 1:3]
+
+# genlight
+t(as.matrix(x))[c(1,5,17), 1:3]
+
+```
+
+Note the difference in allele formatting between VCF and genlight objects. 
+
+Unlike genlight objects, there is no concept of 'population' in VCF data. Therefore, you need to set the population data yourself.
+```{r}
+
+library(adegenet)
+pop(x) <- as.factor(c("us", "eu", "us", "af", "eu", "us", "mx", "eu", "eu", "sa", "mx", "sa", "us", "sa", "Pmir", "us", "eu", "eu"))
+popNames(x)
+
+```
+
+In a genlight object, different samples may be of different ploidy levels. You can set the ploidy level of all the samples in the genlight object to the same ploidy using the function ploidy() as shown below.
+```{r}
+
+ploidy(x) <- 2
+
+```
+
+### Distance matrices
+You can create a distance matrix from a genlight object using the function dist().
+```{r}
+
+x.dist <- dist(x)
+x.dist
+
+```
+
+You can also create distance matrices using functions from other packages such as the bitwise.dist() function in the 'poppr' package.
+```{r}
+
+x.dist <- poppr::bitwise.dist(x)
+x.dist
+
+```
+
+### Creating chromR objects
+
+```{r}
+
+library(vcfR)
+
+# Find the files.
+vcf_file <- system.file("extdata", "pinf_sc50.vcf.gz", package = "pinfsc50")
+dna_file <- system.file("extdata", "pinf_sc50.fasta", package = "pinfsc50")
+gff_file <- system.file("extdata", "pinf_sc50.gff", package = "pinfsc50")
+
+# Input the files.
+vcf <- read.vcfR(vcf_file, verbose = FALSE)
+dna <- ape::read.dna(dna_file, format = "fasta")
+gff <- read.table(gff_file, sep="\t", quote="")
+
+# Create a chromR object.
+chrom <- create.chromR(name="Supercontig", vcf=vcf, seq=dna, ann=gff, verbose=TRUE)
+
+chrom
+
+```
+Note the warning message above occurs because the names in the data sources do not perfectly match. If you're confident that the names are correct, you can move forward without making changes.
+
+
+You can graphically view the chromR object using the function plot() to plot histograms of the data summaries.
+```{r}
+
+plot(chrom)
+
+```
+
+The read depth is the sum over all the samples. The peak represents the depth where most of our genomes were sequenced at. Quality (Qual) is less easy to interpret. The last panel (SNP densities) is empty because this data is created during the processing of chromR objects.
+
+You can also view graphically view the chromR object using the function chromoqc() which creates a chromo plot. The chromo plot displays the same information except the data is distributed along its chromosomal cordinates.
+```{r}
+
+chromoqc(chrom, dp.alpha = 66)
+
+```
+
+
+### Processing chromR objects
+Creating and processing data of a chromR object are two separate tasks. Processing generates summaries of the data. Some of these summaries will need to be updated as the chromR object is updated.
+
+```{r}
+
+chrom <- proc.chromR(chrom, verbose = TRUE)
+plot(chrom)
+
+```
+Note that we can now see variant densities following processing in the above plot. Also note in the chromoqc plot below, that you can now see the variant densities and where nucleotides are in the reference sequence..
+
+```{r}
+
+chromoqc(chrom, dp.alpha = 66)
+
+```
+
+Below is an attempt to omit low quality variants from the chromR object.
+```{r}
+
+#vcf <- read.vcfR("pinfsc50_qc.vcf.gz", verbose = FALSE)
+vcf <- read.vcfR("./data/lab-10-data/pinfsc50_filtered.vcf.gz", verbose = FALSE)
+chrom <- create.chromR(name="Supercontig", vcf=vcf, seq=dna, ann=gff, verbose=FALSE)
+chrom <- proc.chromR(chrom, verbose = FALSE)
+chromoqc(chrom, dp.alpha = 66)
+
+```
+
+Note there is less data (smaller quantity) following the quality control steps. Read depth is fairly uniform and lacks large variation as was observed in the above plots. The mapping quality also seems relatively constant as the variants with low mapping quality have been omitted. 
+
+### Tabular summaries (Finished here)
+```{r}
+
+head(chrom@var.info)
+
+```
+
+```{r}
+
+head(chrom@win.info)
+
+```
+
+### Genetic differentiation
+```{r}
+
+library(vcfR)
+data(vcfR_example)
+pop <- as.factor(c("us", "eu", "us", "af", "eu", "us", "mx", "eu", "eu", "sa", "mx", "sa", "us", "sa", "Pmir", "us", "eu", "eu"))
+myDiff <- genetic_diff(vcf, pops = pop, method = 'nei')
+knitr::kable(head(myDiff[,1:15]))
+
+```
+
+```{r}
+
+knitr::kable(head(myDiff[,16:19]))
+
+```
+
+```{r}
+
+knitr::kable(round(colMeans(myDiff[,c(3:9,16,19)], na.rm = TRUE), digits = 3))
+
+```
+
+```{r}
+
+library(reshape2)
+library(ggplot2)
+
+dpf <- melt(myDiff[,c(3:8,19)], varnames=c('Index', 'Sample'), value.name = 'Depth', na.rm=TRUE)
+
+```
+
+```{r}
+
+p <- ggplot(dpf, aes(x=variable, y=Depth)) + geom_violin(fill="#2ca25f", adjust = 1.2)
+p <- p + xlab("")
+p <- p + ylab("")
+p <- p + theme_bw()
+p
+
+```
+
+#### Exercises Part II
+1. You actually have everything you need to make a Manhattan plot. Can you figure out how to plot G′ST (y-axis) by genomic position (POS)?
+2. This Manhatttan plot shouldlook a bit unusual. Can you think of anything that may be wrong with this analysis?
+3. Can you figure out how to zoom in on a particular region of a chromosome in chromoqc()?
+4. Can you use the function queryMETA() to look for other data in your file that may be of interest?
+
+
