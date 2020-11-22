@@ -303,6 +303,7 @@ p + geom_point(size=5, alpha=0.7)
 
 ## Heatmap Plots Tutorial
 
+Load packages
 ```{r}
 
 library("phyloseq"); packageVersion("phyloseq")
@@ -310,12 +311,14 @@ library("ggplot2"); packageVersion("ggplot2")
 
 ```
 
+Set theme for ggplot
 ```{r}
 
 theme_set(theme_bw())
 
 ```
 
+Upload data and plot a heatmap of the top 300 most abundant bacteria taxa across all samples. Note that no prior preprocessing occurred, which is not recommended.
 ```{r}
 
 data("GlobalPatterns")
@@ -325,24 +328,29 @@ plot_heatmap(gpt, sample.label="SampleType")
 
 ```
 
+### Adjusting plot aesthetics
+Subset a smaller dataset based on the Archaeal phylum using the function subset_taxa().
 ```{r}
 
 gpac <- subset_taxa(GlobalPatterns, Phylum=="Crenarchaeota")
 
 ```
 
+Next, create a default heatmap using the plot_heatmap() function.
 ```{r}
 
 plot_heatmap(gpac)
 
 ```
 
+We can also re-label based on sample type.
 ```{r}
 
 (p <- plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family"))
 
 ```
 
+To change the axes titles, you can use the following code:
 ```{r}
 
 p$scales$scales[[1]]$name <- "My X-Axis"
@@ -351,72 +359,85 @@ print(p)
 
 ```
 
+In order to change the color scheme you can use the low and high arguments in the plot_heatmap() function and specify the colors.
 ```{r}
 
 plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#000033", high="#CCFF66")
 
 ```
 
+Here is a different variation using the colors dark-blue and red.
 ```{r}
 
 plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#000033", high="#FF3300")
 
 ```
 
+Here is another variation using a very dark-blue and a very-light blue color scheme.
 ```{r}
 
 plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#000033", high="#66CCFF")
 
 ```
 
+Here is a "dark on light" color scheme which can be done by indicating the color white for those with abundance values of 0.
 ```{r}
 
 plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#66CCFF", high="#000033", na.value="white")
 
 ```
 
+Here is a different variation where the near zero color is closer to a cream color while the other colors are a blue-grey gradient.
 ```{r}
 
 plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#FFFFCC", high="#000033", na.value="white")
 
 ```
 
+### Different Ordination Methods and Distances
+Here we use the NMDS ordination on the jaccard distance.
 ```{r}
 
 plot_heatmap(gpac, "NMDS", "jaccard")
 
 ```
 
+Here we use the Detrended correspondence analysis (DCA)
 ```{r}
 
 plot_heatmap(gpac, "DCA", "none", "SampleType", "Family")
 
 ```
 
+Here we use the unconstrained redundancy analysis (aka Principle Component Analysis)
 ```{r}
 
 plot_heatmap(gpac, "RDA", "none", "SampleType", "Family")
 
 ```
 
+Here we use the PCoA/MDS ordination on the bray-curtis distance (the default distance).
 ```{r}
 
 plot_heatmap(gpac, "PCoA", "bray", "SampleType", "Family")
 
 ```
 
+Here we use the MDS/PCoA ordination on the Unweighted-UniFrac distance.
 ```{r}
 
 plot_heatmap(gpac, "PCoA", "unifrac", "SampleType", "Family")
 
 ```
 
+Here we use the weighted-UniFrac distance and MDS/PCoA ordination.
 ```{r}
 
 plot_heatmap(gpac, "MDS", "unifrac", "SampleType", "Family", weighted=TRUE)
 
 ```
 
+We can also create a heatmap using base-R graphics and the more common (but problematic) hierarchical clustering organization.
 ```{r}
 
 heatmap(otu_table(gpac))
