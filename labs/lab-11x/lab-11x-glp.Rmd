@@ -4,6 +4,14 @@ output: html_document
 
 # Lab 11x: Microbiome Analysis using phyloseq
 
+#### We will complete the first 4 out of 6 tutorials below:
+1. [Ordination](https://joey711.github.io/phyloseq/plot_ordination-examples.html)
+2. [Alpha Diversity](https://jeffreyblanchard.github.io/EvoGeno/EvoGeno_Lab11x_phyloseq.html)
+3. [Heatmaps](https://joey711.github.io/phyloseq/plot_heatmap-examples.html)
+4. [Networks](http://joey711.github.io/phyloseq/plot_network-examples.html)
+5. [Trees](https://joey711.github.io/phyloseq/plot_tree-examples.html)
+6. [Bar Plots](https://joey711.github.io/phyloseq/plot_bar-examples.html)
+
 ## Ordination
 
 Load packages and data
@@ -23,6 +31,11 @@ theme_set(theme_bw())
 
 ```
 
+There are tools in the phyloseq package for preprocessing data. You can see examples and details of preprocessing in this [dedicated preprocessing tutorial](http://joey711.github.io/phyloseq/preprocess.html). 
+
+When preprocessing you must think hard about the preprocessing that you do and be able to explain why you did them. The steps you took during preprocessing should be clearly documented.
+
+We will preprocess by first filtering low-occurrence, poorly-represented OTUs from the data. Below, the OTUs are removed and indicated not to appear more than 5 times in more than half the samples. 
 ```{r}
 
 GP = GlobalPatterns
@@ -31,12 +44,14 @@ GP1 = prune_taxa(wh0, GP)
 
 ```
 
+Next, we will transform the data to even the sampling depth.
 ```{r}
 
 GP1 = transform_sample_counts(GP1, function(x) 1E6 * x/sum(x))
 
 ```
 
+Next, we keep only the top five most abundant phyla.
 ```{r}
 
 phylum.sum = tapply(taxa_sums(GP1), tax_table(GP1)[, "Phylum"], sum, na.rm=TRUE)
@@ -45,6 +60,7 @@ GP1 = prune_taxa((tax_table(GP1)[, "Phylum"] %in% top5phyla), GP1)
 
 ```
 
+The preprocessing still leaves us with 204 OTUs. A major problem here is that some are human-associated microbiomes and some are not. Next, we will define human-associated versus non-human.
 ```{r}
 
 human = get_variable(GP1, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
@@ -52,6 +68,10 @@ sample_data(GP1)$human <- factor(human)
 
 ```
 
+### Four Main Ordination Plots
+The plot_ordination() function supports four basic representations of an ordination.
+
+We'll start by plotting just the OTUs and coloring the points by Phylum.
 ```{r}
 
 GP.ord <- ordinate(GP1, "NMDS", "bray")
@@ -60,12 +80,14 @@ print(p1)
 
 ```
 
+This is a complicated looking plot, which is not necessarily a good thing. We can use facet_wrap() function to simplify the plot.
 ```{r}
 
 p1 + facet_wrap(~Phylum, 3)
 
 ```
 
+Next, we'll plot only the samples and color the points by sample type while also modifying the shape according to whether they are human-associated or not.
 ```{r}
 
 p2 = plot_ordination(GP1, GP.ord, type="samples", color="SampleType", shape="human") 
@@ -73,6 +95,7 @@ p2 + geom_polygon(aes(fill=SampleType)) + geom_point(size=5) + ggtitle("samples"
 
 ```
 
+The plot_ordination() function also allows you to be able to plot both samples and OTUs on the same graph. 
 ```{r}
 
 p3 = plot_ordination(GP1, GP.ord, type="biplot", color="SampleType", shape="Phylum", title="biplot")
@@ -85,6 +108,7 @@ p3 + scale_shape_manual(values=GP1.shape)
 
 ```
 
+And, of course, we can simplify this graph (reduce occlusion) by using the argument type="split" instead of the facet_wrap approach.
 ```{r}
 
 p4 = plot_ordination(GP1, GP.ord, type="split", color="Phylum", shape="human", label="SampleType", title="split") 
@@ -92,19 +116,8 @@ p4
 
 ```
 
-```{r}
-
-gg_color_hue <- function(n){
-    hues = seq(15, 375, length=n+1)
-    hcl(h=hues, l=65, c=100)[1:n]
-}
-color.names <- levels(p4$data$Phylum)
-p4cols <- gg_color_hue(length(color.names))
-names(p4cols) <- color.names
-p4cols["samples"] <- "black"
-p4 + scale_color_manual(values=p4cols)
-
-```
+### Supported Ordination Methods
+Here we try different method parameter options to the plot_ordination() function. 
 
 ```{r}
 
@@ -117,12 +130,14 @@ plist = llply(as.list(ord_meths), function(i, physeq, dist){
 
 ```
 
+Store the ordination methods plot results in a list.
 ```{r}
 
 names(plist) <- ord_meths
 
 ```
 
+Next, we extract the data from each of the individual plots and put the extracted data into one big dataframe so that we can include all plots in one graphic.
 ```{r}
 
 pdataframe = ldply(plist, function(x){
@@ -134,6 +149,7 @@ names(pdataframe)[1] = "method"
 
 ```
 
+Next, we can use our dataframe to make a standard faceted ggplot scatterplot.
 ```{r}
 
 p = ggplot(pdataframe, aes(Axis_1, Axis_2, color=SampleType, shape=human, fill=SampleType))
@@ -145,12 +161,14 @@ p
 
 ```
 
+To replot a larger version of an individual plot, we can print the plist from which the pdataframe was made. Here, we plot the second element in the list.
 ```{r}
 
 plist[[2]] 
 
 ```
 
+We can add some additional layers to improve the aesthetics of the plot.
 ```{r}
 
 p = plist[[2]] + scale_colour_brewer(type="qual", palette="Set1")
@@ -160,6 +178,8 @@ p
 
 ```
 
+### MDS ("PCoA") on Unifrac Distances
+Next, we can use the ordinate() function to simultaneously perform weighted UniFrac and perform a Principal Component Analysis on the distance matrix. Then, we can pass the data and the ordination results to plot_ordination to create a default ggplot2 graphic.
 ```{r}
 
 ordu = ordinate(GP1, "PCoA", "unifrac", weighted=TRUE)
@@ -167,6 +187,7 @@ plot_ordination(GP1, ordu, color="SampleType", shape="human")
 
 ```
 
+Then, we add layers to improve the aesthetics of the plot.
 ```{r}
 
 p = plot_ordination(GP1, ordu, color="SampleType", shape="human")
