@@ -3,14 +3,15 @@ output: html_document
 ---
 
 # Lab 10: Population genomics based on high throughput sequencing (HTS)
+This tutorial is derived from [Novel tools in R for population genomic analyses](https://grunwaldlab.github.io/Population_Genetics_in_R/intro_vcf.html), [Reading VCF data](https://grunwaldlab.github.io/Population_Genetics_in_R/reading_vcf.html), and [Analysis of genome data](https://grunwaldlab.github.io/Population_Genetics_in_R/analysis_of_genome.html) by BJ Knaus, JF Tabima, and NJ Grünwald.
 
 ## Part I - Reading VCF data
 Genetic variation data is typically stored in variant call format (VCF). Advantage: only variants (e.g. SNPs, indels, etc.) are reported reducing the file size
 
 ### VCF file structure
-VCF files have three sections: a vcf header, a fix region and a gt region.
+VCF files have three sections: a vcf header (meta information), a fix (fixed information) region and a gt (genotype information) region.
 
-```{r}
+```{r message=FALSE}
 
 library(vcfR)
 
@@ -30,6 +31,10 @@ The meta region contains information about the file, its creation, and informati
 strwrap(vcf@meta[1:7])
 
 ```
+
+The first line contains the version of the VCF format used in the file.
+The second line specifies the software which created the VCF file.
+The remaining lines contain INFO and FORMAT specifications which define abbreviations used in the fix and gt portions of the file.
 
 The function queryMETA() summarizes the meta information but only shows the vcfR object as a parameter.
 ```{r}
@@ -89,25 +94,40 @@ write.vcf(vcf, "./data/lab-10-data/myVCFdata_filtered.vcf.gz")
 ```
 
 #### Exercises Part I
-    1. How would we find more information about read.vcfR()?
-        - by typing ?read.vcfR in the console or highlighting read.vcfR and then pressing fn and f4 buttons together
-    2. How would we learn what the acronym “AD” stands for?
-        - by using the element argument in the queryMETA() function
-    3. We used the head() function to view the first few lines of fix data. How would we view the last few lines of fix data?
-        - use the function tail()
-    4. There is a column in the fix portion of the data called QUAL. It is not defined in the meta portion of the data because it is defined in the VCF specification. It stands for ‘quality’. Does QUAL appear useful to us? Why or why not?
-        - 
-    5. How would we query the sample names?
+1. How would we find more information about read.vcfR()?
+    - by typing ?read.vcfR in the console or highlighting read.vcfR and then pressing fn and f4 buttons together
+2. How would we learn what the acronym “AD” stands for?
+    - by using the element argument in the queryMETA() function
+3. We used the head() function to view the first few lines of fix data. How would we view the last few lines of fix data?
+    - use the function tail()
+4. There is a column in the fix portion of the data called QUAL. It is not defined in the meta portion of the data because it is defined in the VCF specification. It stands for ‘quality’. Does QUAL appear useful to us? Why or why not?
+    
+```{r}
+
+plot(vcf)
+
+```
+    - The QUAL column tells you the quality of the variants over all samples. In this case, the quality of the variants seem to be mostly distributed between 0 and 2000.  
+    
+    
+5. How would we query the sample names?
+    - Using colnames() function
+```{r}
+
+colnames(vcf@gt)
+
+```
+    
 
 ## Part II - Analysis of Genome Data
-### Opening and examining the dataset
+The dataset used in this tutorial is the pinfsc50 dataset, which was pulled together from several published *P. infestans* genomics projects. The data is subsetted into one supercontig. Due to it's smaller size, it can be conveniently used for examples to follow.
 
+### Opening and examining the dataset
+Read the VCF data into R.
 ```{r}
 
 library('vcfR')
 vcf <- read.vcfR("./data/lab-10-data/pinfsc50_filtered.vcf.gz")
-# This data can also be download from the course repo - https://github.com/jeffreyblanchard/EvoGeno/blob/master/Grunwald/pinfsc50_filtered.vcf.gz
-
 vcf
 ```
 
@@ -121,7 +141,8 @@ x
 
 ```
 
-The warning message occurs because genlight objects support no more than two alleles. Conversely, variant call format can include many more alleles.
+The warning message occurs because genlight objects support no more than two alleles. Conversely, variant call format (vcf) can include many more alleles.
+
 ```{r}
 
 # vcfR
@@ -187,11 +208,15 @@ gff <- read.table(gff_file, sep="\t", quote="")
 # Create a chromR object.
 chrom <- create.chromR(name="Supercontig", vcf=vcf, seq=dna, ann=gff, verbose=TRUE)
 
+```
+Note the warning message above occurs because the names in the data sources do not perfectly match. If you're confident that the names are correct, you can move forward without making changes. In this case, Supercontig_1.50 and Supercontig_1.50 of Phytophthora infestans T30-4 are synonymous so we can move forward without making changes.
+
+Verify that the contents of the chromR object are what we expect.
+```{r}
+
 chrom
 
 ```
-Note the warning message above occurs because the names in the data sources do not perfectly match. If you're confident that the names are correct, you can move forward without making changes.
-
 
 You can graphically view the chromR object using the function plot() to plot histograms of the data summaries.
 ```{r}
@@ -200,9 +225,9 @@ plot(chrom)
 
 ```
 
-The read depth is the sum over all the samples. The peak represents the depth where most of our genomes were sequenced at. Quality (Qual) is less easy to interpret. The last panel (SNP densities) is empty because this data is created during the processing of chromR objects.
+The read depth is the sum over all the samples. The peak represents the depth where most of our genomes were sequenced at. Note that mapping quality peaks at 60 but also contains variants that deviate from this value. Quality (Qual) is less easy to interpret. Even though we want our reads to be high quality, quality is generally difficult to measure. Therefore, quality may not be a good way to judge your variants. The last panel (SNP densities) is empty because this data is created during the processing of chromR objects.
 
-You can also view graphically view the chromR object using the function chromoqc() which creates a chromo plot. The chromo plot displays the same information except the data is distributed along its chromosomal cordinates.
+You can also graphically view the chromR object using the function chromoqc() which creates a chromo plot. The chromo plot displays the same information except the data is distributed along its chromosomal cordinates.
 ```{r}
 
 chromoqc(chrom, dp.alpha = 66)
@@ -219,7 +244,8 @@ chrom <- proc.chromR(chrom, verbose = TRUE)
 plot(chrom)
 
 ```
-Note that we can now see variant densities following processing in the above plot. Also note in the chromoqc plot below, that you can now see the variant densities and where nucleotides are in the reference sequence..
+
+Note that we can now see variant densities following processing in the above plot. Also note in the chromoqc plot below, that you can now see the variant densities and where nucleotides are in the reference sequence.
 
 ```{r}
 
@@ -230,7 +256,6 @@ chromoqc(chrom, dp.alpha = 66)
 Below is an attempt to omit low quality variants from the chromR object.
 ```{r}
 
-#vcf <- read.vcfR("pinfsc50_qc.vcf.gz", verbose = FALSE)
 vcf <- read.vcfR("./data/lab-10-data/pinfsc50_filtered.vcf.gz", verbose = FALSE)
 chrom <- create.chromR(name="Supercontig", vcf=vcf, seq=dna, ann=gff, verbose=FALSE)
 chrom <- proc.chromR(chrom, verbose = FALSE)
@@ -238,15 +263,19 @@ chromoqc(chrom, dp.alpha = 66)
 
 ```
 
-Note there is less data (smaller quantity) following the quality control steps. Read depth is fairly uniform and lacks large variation as was observed in the above plots. The mapping quality also seems relatively constant as the variants with low mapping quality have been omitted. 
+Note there is less data following the quality control steps. Read depth is fairly uniform and lacks large variation as was observed in the above plots. The mapping quality also seems relatively constant as the variants with low mapping quality have been omitted. 
 
-### Tabular summaries (Finished here)
+### Tabular summaries
+When chromR objects are processed, two forms of tabular data are created.
+
+The first are summaries that are made on a per variant basis. You can view these summaries using @var.info as shown below.
 ```{r}
 
 head(chrom@var.info)
 
 ```
 
+The second are summaries made on a per window basis, which include nucleotide content per window, the number of genic sites per window, and the number of variants per window. This can be viewed using @win.info as shown below.
 ```{r}
 
 head(chrom@win.info)
@@ -254,6 +283,8 @@ head(chrom@win.info)
 ```
 
 ### Genetic differentiation
+The function genetic_diff() in the vcfR package can be used to measure population diversity and differentiation. Here, we need to first supply population information as a factor, and then specify the method of analysis as 'nei'. The 'nei' method is based on methods reported by Hedrick ([see 2005 paper](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.0014-3820.2005.tb01814.x)) except that the heterozygosities are weighted by the number of alleles observed in each population rather than the number of individuals. This removes the need to assume how many alleles each individual may contribute.
+
 ```{r}
 
 library(vcfR)
@@ -264,28 +295,30 @@ knitr::kable(head(myDiff[,1:15]))
 
 ```
 
+Note that the genetic_diff() function returns the chromosome and position of each variant as provided in the VCF data. This allows us to align its output with the VCF data. 'Hs' in the column headers refers to heterozygosities for each population. 'n' in the column refers to the number of allels observed in each population.
+
+The remaining columns (i.e. 16:19) contain Gst, the maximum heterozygosity (i.e. Htmax), the maximum Gst, and G'st. See below:
+
 ```{r}
 
 knitr::kable(head(myDiff[,16:19]))
 
 ```
 
+Now that we have information for each variant in the VCF data, and considering this is a large quantity of information, we'll want to summarize it. You can do this by taking the averages of the data using the colMeans() function.
 ```{r}
 
 knitr::kable(round(colMeans(myDiff[,c(3:9,16,19)], na.rm = TRUE), digits = 3))
 
 ```
 
+Another way to do this is to visualize the data using violin plots.
 ```{r}
 
 library(reshape2)
 library(ggplot2)
 
 dpf <- melt(myDiff[,c(3:8,19)], varnames=c('Index', 'Sample'), value.name = 'Depth', na.rm=TRUE)
-
-```
-
-```{r}
 
 p <- ggplot(dpf, aes(x=variable, y=Depth)) + geom_violin(fill="#2ca25f", adjust = 1.2)
 p <- p + xlab("")
@@ -297,8 +330,49 @@ p
 
 #### Exercises Part II
 1. You actually have everything you need to make a Manhattan plot. Can you figure out how to plot G′ST (y-axis) by genomic position (POS)?
-2. This Manhatttan plot shouldlook a bit unusual. Can you think of anything that may be wrong with this analysis?
+
+The Manhattan plot can be made using the plot( ) function. The getPOS( ) pulls the genomic positions from the vcf file. You can then align that with the calculated Gprimest from the created myDiff dataframe. The rest of the code is for adjusting plot aesthetics. 
+```{r}
+
+plot(getPOS(vcf), myDiff$Gprimest,  pch = 20, col = "#1E90FF44", xlab = "", ylab = "", ylim = c(0, 1), xaxt = "n")
+axis(side = 1, at = seq(0, 1e5, by = 1e4), labels = seq(0, 100, by = 10))
+title(xlab='Genomic position (Kbp)')
+title(ylab = expression(italic("G'"["ST"])))
+
+```
+
+
+2. This Manhatttan plot should look a bit unusual. Can you think of anything that may be wrong with this analysis?
+
+```{r}
+
+table(pop)
+
+```
+
+There's a small sample size.
+
 3. Can you figure out how to zoom in on a particular region of a chromosome in chromoqc()?
+
+The following code allows us to zoom into the chromosome region between 2e05 to 4e05 basepairs.
+```{r}
+
+chromoqc(chrom, dp.alpha = 66, xlim = c(2e05, 4e05))
+
+```
+
 4. Can you use the function queryMETA() to look for other data in your file that may be of interest?
 
+You can use the queryMeta() function to look at specific data of interest and specify a population using the argument 'element'.
+```{r}
+
+queryMETA(vcf)
+
+```
+
+```{r}
+
+queryMETA(vcf, element="DP")
+
+```
 
