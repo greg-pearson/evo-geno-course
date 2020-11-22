@@ -4,7 +4,34 @@ output: html_document
 
 # Lab 12: Network Analysis using Cytoscape and RCy3
 
+## Basic Data Visualization Tutorial
 
+![Example of a default network from cytoscape. The data used are from yeast in which GAL1, GAL4, and GAL80 genes were perturbed.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-01-default-network.png)
+
+![Here we set the node fill color of the gal80Rexp to a gradient ranging from blue to red.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-02-set-node-fill-color.png)
+
+![Here we set the default node color to a dark-grey color (originally blue).](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-03-set-default-node-color.png)
+
+![Here we set the node border width to 10 for anything with significance value less than 0.05](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-04-set-node-border-width.png)
+
+![Here we created a legend to indicate node fill color and node border width](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-05-creating-a-legend.png)
+
+![Here we changed the layout to a degree sorted circle layout.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-06-degree-sorted-circle-layout.png)
+
+![Here we converted the layout to a prefuse force-directed layout.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-07-prefuse-force-directed-layout.png)
+
+![Here we selected nodes that were 2 or higher (highlighted yellow).](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-08-select-nodes.png)
+
+![Here we expanded the nodes to include nearest neighbors to the previous network and then created a new network.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-09-expand-selection-and-create-new-network.png)
+
+
+
+
+
+
+## Differentially Expressed Genes Tutorial
+
+## RCy3 Exercises
 
 
 
