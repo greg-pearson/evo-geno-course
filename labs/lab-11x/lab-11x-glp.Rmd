@@ -446,6 +446,7 @@ heatmap(otu_table(gpac))
 
 ## Networks Tutorial
 
+Load packages and enterotype data
 ```{r}
 
 library(phyloseq); packageVersion("phyloseq")
@@ -454,48 +455,63 @@ data(enterotype)
 
 ```
 
+To ensure complete reducibility of the images in this tutorial, we can set the rand number generator seed.
 ```{r}
 
 set.seed(711L)
 
 ```
 
+Remove 9 samples for which no enterotype designation was assigned.
 ```{r}
 
 enterotype = subset_samples(enterotype, !is.na(Enterotype))
 
 ```
 
+Create a network plot using the function plot_net().
 ```{r}
 
 plot_net(enterotype, maxdist = 0.4, point_label = "Sample_ID")
 
 ```
 
+Here we plot some of the sample variables onto the network graphic as color and shape.
 ```{r}
 
 plot_net(enterotype, maxdist = 0.3, color = "SeqTech", shape="Enterotype")
 
 ```
 
+In the above network, the max distance was informed but arbitrarily chosen. We can change this value, which decreases the number of edges in the network.
+```{r}
+
+plot_net(enterotype, maxdist = 0.2, color = "SeqTech", shape="Enterotype")
+
+```
+
+Next, we create an igraph-based network based on the default distance method Jaccard and a maximum distance of 0.3 between connected nodes.
 ```{r}
 
 ig <- make_network(enterotype, max.dist=0.3)
 
 ```
 
+Then, we plot this network with the default settings.
 ```{r}
 
 plot_network(ig, enterotype)
 
 ```
 
+Next, we map some of the sample variables onto the graphic using color and shape.
 ```{r}
 
 plot_network(ig, enterotype, color="SeqTech", shape="Enterotype", line_weight=0.4, label=NULL)
 
 ```
 
+Again, the choice of maximum-distance and distance method was informed but arbitrarily chosen. Next, we lower the maximum distance and observe a decreasing number of edges in the network.
 ```{r}
 
 ig <- make_network(enterotype, max.dist=0.2)
@@ -503,6 +519,7 @@ plot_network(ig, enterotype, color="SeqTech", shape="Enterotype", line_weight=0.
 
 ```
 
+Lastly, we observe how the network changes when we use the Bray-Curtis method instead of the Jaccard method.
 ```{r}
 
 ig <- make_network(enterotype, dist.fun="bray", max.dist=0.3)
