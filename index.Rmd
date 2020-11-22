@@ -35,3 +35,7 @@ output:
 - 9: [Lab 9: Programming in R - Regular Expressions](./labs/lab-9/lab-9-glp.html)
 
 - 9x: [Lab 9x: Programming in R - Control Structures and Functions](./labs/lab-9x/lab-9x-glp.html)
+
+- 10: [Lab 10: Population genomics based on high throughput sequencing (HTS)](./labs/lab-10/lab-10-glp.html)
+
+- 11: [Lab 11: Microbiome Analysis using data2 and phyloseq](./labs/lab-11/lab-11-glp.html)
