@@ -12,7 +12,7 @@ output: html_document
 5. [Trees](https://joey711.github.io/phyloseq/plot_tree-examples.html)
 6. [Bar Plots](https://joey711.github.io/phyloseq/plot_bar-examples.html)
 
-## Ordination
+## Ordination Tutorial
 
 Load packages and data
 ```{r message=FALSE}
@@ -197,8 +197,9 @@ p + ggtitle("MDS/PCoA on weighted-UniFrac distance, GlobalPatterns")
 
 ```
 
-## Alpha Diversity
+## Alpha Diversity Tutorial
 
+Load packages and GlobalPatterns data
 ```{r}
 
 library("phyloseq"); packageVersion("phyloseq")
@@ -207,6 +208,7 @@ library("ggplot2"); packageVersion("ggplot2")
 
 ```
 
+Set the ggplot themes
 ```{r}
 
 theme_set(theme_bw())
@@ -220,42 +222,51 @@ scale_fill_discrete <-  function(palname=pal, ...){
 
 ```
 
+### Prepare data
+First, we prune the OTUs that are not present in any of the samples. Although it is tempting to trim noise right away, many richness estimates are modeled on singletons and doubletons in the abundance data. Therefore, it is important to leave the noise in the dataset if you want a meaningful estimate.
 ```{r}
 
 GP <- prune_species(speciesSums(GlobalPatterns) > 0, GlobalPatterns)
 
 ```
 
+### Plot Examples
+Here, we plot the default graphic produced by plot_richness() function.
 ```{r}
 
 plot_richness(GP)
 
 ```
 
+Next, we specify a measures argument to the plot_richness() function. This will include the alpha-diversity measures that we're interested in (i.e. Chao1 and Shannon).
 ```{r}
 
 plot_richness(GP, measures=c("Chao1", "Shannon"))
 
 ```
 
+Next, we specify a sample variable on which to group/organize samples along the x axis. In this case, we use the SampleType variable.
 ```{r}
 
 plot_richness(GP, x="SampleType", measures=c("Chao1", "Shannon"))
 
 ```
 
+If we wanted to use an external variable in the plot that isn't in the GP dataset already (e.g. such as human-associated versus not human-associated), we first have to define this new variable as a factor.
 ```{r}
 
 sampleData(GP)$human <- getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
 
 ```
 
+Then, we tell the plot_richness() function to map the new variable on the x axis and color the points according to the SampleType they belong to.
 ```{r}
 
 plot_richness(GP, x="human", color="SampleType", measures=c("Chao1", "Shannon"))
 
 ```
 
+If we wanted to merge samples from the SampleType environment and we would use the merge_samples() function to merge the samples.
 ```{r}
 
 GPst = merge_samples(GP, "SampleType")
@@ -265,6 +276,7 @@ sample_data(GPst)$human <- as.logical(sample_data(GPst)$human)
 
 ```
 
+Then, we plot the environment-merged version of the data, and add a geom_point() layer to change the size and transparency of the points.
 ```{r}
 
 p = plot_richness(GPst, x="human", color="SampleType", measures=c("Chao1", "Shannon"))
@@ -272,12 +284,15 @@ p + geom_point(size=5, alpha=0.7)
 
 ```
 
+### More details about ggplot2
+To remove the original layer points, first we check which lists are present in p.
 ```{r}
 
 p$layers
 
 ```
 
+We can see that the first layer is the one specifying the original points. Next, we use negative indexing to remove that layer and add a new geom_point with larger point size.
 ```{r}
 
 p$layers <- p$layers[-1]
@@ -286,7 +301,7 @@ p + geom_point(size=5, alpha=0.7)
 ```
 
 
-## Heatmap Plots
+## Heatmap Plots Tutorial
 
 ```{r}
 
@@ -408,7 +423,7 @@ heatmap(otu_table(gpac))
 
 ```
 
-## Networks
+## Networks Tutorial
 
 ```{r}
 
