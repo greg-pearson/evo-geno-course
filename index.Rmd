@@ -39,3 +39,5 @@ output:
 - 10: [Lab 10: Population genomics based on high throughput sequencing (HTS)](./labs/lab-10/lab-10-glp.html)
 
 - 11: [Lab 11: Microbiome Analysis using data2 and phyloseq](./labs/lab-11/lab-11-glp.html)
+
+- 11x: [Lab 11x: Microbiome Analysis using phyloseq](./labs/lab-11x/lab-11x-glp.html)
