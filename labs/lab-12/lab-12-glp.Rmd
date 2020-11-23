@@ -24,12 +24,21 @@ output: html_document
 
 ![Here we expanded the nodes to include nearest neighbors to the previous network and then created a new network.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-basic-data-visualization-tutorial-images/image-09-expand-selection-and-create-new-network.png)
 
-
-
-
-
-
 ## Differentially Expressed Genes Tutorial
+
+### Example 1
+
+#### Upregulated Genes
+
+![Here is a network showing upregulated genes in ovarian cancer. The string enrichment analysis is represented by split donuts.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-differentially-expressed-genes-tutorial-images/example-1/image-05-string-enrichment-upregulated-genes.png)
+
+#### Downregulated Genes
+![Here is a network showing downregulated genes in ovarian cancer. The string enrichment analysis is represented by pie charts.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-differentially-expressed-genes-tutorial-images/example-1/image-08-string-enrichment-pie-chart-downregulated-genes.png)
+
+### Example 2
+
+![Here is a network highlighting three genes that were identified as drivers of ovarian cancer: BRCA1, BRCA2, and TP53.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-differentially-expressed-genes-tutorial-images/example-2/image-02-cancer-drivers-final.png)
+
 
 ## RCy3 Exercises
 
