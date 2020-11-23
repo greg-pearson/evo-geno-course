@@ -41,3 +41,5 @@ output:
 - 11: [Lab 11: Microbiome Analysis using data2 and phyloseq](./labs/lab-11/lab-11-glp.html)
 
 - 11x: [Lab 11x: Microbiome Analysis using phyloseq](./labs/lab-11x/lab-11x-glp.html)
+
+- 12: [Lab 12: Network Analysis using Cytoscape and RCy3](./labs/lab-12/lab-12-glp.html)
