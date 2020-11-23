@@ -40,8 +40,241 @@ output: html_document
 ![Here is a network highlighting three genes that were identified as drivers of ovarian cancer: BRCA1, BRCA2, and TP53.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/cytoscape-differentially-expressed-genes-tutorial-images/example-2/image-02-cancer-drivers-final.png)
 
 
-## RCy3 Exercises
+## RCy3 Vignette
+
+Load Rcy3 package and ensure connection with Cytoscape
+```{r}
+
+library(RCy3)
+cytoscapePing()
+
+```
+
+### My first network
+*Create a Cytoscape network from some basic R objects.*
+```{r}
+
+# nodes <- data.frame(id=c("node 0","node 1","node 2","node 3"),
+#           group=c("A","A","B","B"), # categorical strings
+#           score=as.integer(c(20,10,15,5)), # integers
+#           stringsAsFactors=FALSE)
+# edges <- data.frame(source=c("node 0","node 0","node 0","node 2"),
+#           target=c("node 1","node 2","node 3","node 3"),
+#          interaction=c("inhibits","interacts","activates","interacts"),  # optional
+#           weight=c(5.1,3.0,5.2,9.9), # numeric
+#           stringsAsFactors=FALSE)
+
+# createNetworkFromDataFrames(nodes, edges, title="my first network", collection="DataFrame Example")
+
+```
+
+![Here is the basic network for the My First Network example.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-01-my-first-network-basic.png)
+
+*Switch to the marquee style.*
+```{r}
+
+# setVisualStyle('Marquee')
+
+```
+
+![Here is the marquee-styled network for the My First Network example.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-02-my-first-network-marquee.png)
+
+*Create custom style with node attribute fill mappings and some defaults.*
+```{r}
+
+# style.name = "myStyle"
+# defaults <- list(NODE_SHAPE="diamond",
+#                 NODE_SIZE=30,
+#                 EDGE_TRANSPARENCY=120,
+#                 NODE_LABEL_POSITION="W,E,c,0.00,0.00")
+# nodeLabels <- mapVisualProperty('node label','id','p')
+# nodeFills <- mapVisualProperty('node fill color','group','d',c("A","B"), c("#FF9900","#66AAAA"))
+# arrowShapes <- mapVisualProperty('Edge Target Arrow Shape','interaction','d',c("activates","inhibits","interacts"),c("Arrow","T","None"))
+# edgeWidth <- mapVisualProperty('edge width','weight','p')
+
+# createVisualStyle(style.name, defaults, list(nodeLabels,nodeFills,arrowShapes,edgeWidth))
+# setVisualStyle(style.name)
+
+```
+
+![Here is the custom-styled network for the My First Network example.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-03-my-first-network-custom.png)
+
+*Lock node width and node height.*
+```{r}
+
+# lockNodeDimensions(FALSE, style.name)
+
+```
+
+### Bioconductor graph example
+
+*We can also start from a Bioconductor graphNEL object. Here we create a basic network.*
+```{r}
+
+# g = new ('graphNEL', edgemode='directed')
+# g = graph::addNode ('A', g)
+# g = graph::addNode ('D', g)
+# g = graph::addNode ('C', g, edges = list('D'))
+# g = graph::addNode ('B', g, edges = list(c('A','D','C')))
+# createNetworkFromGraph (g, title='simple network', collection='GraphNEL Example')
+    
+```
+
+![Here is the basic network for the Bioconductor Graph example.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-04-bioconductor-graph-basic.png)
+
+Next, we add attributes, in this case moleculeType and log2fc, to the node table
+```{r}
+
+# df <- data.frame (moleculeType=c('kinase','TF','cytokine','cytokine'),
+#                 log2fc=c(1.8,3.0,-1.2,-2.5),
+#                 row.names = c('A','B','C','D'), # row.names = node names
+#                 stringsAsFactors = FALSE)       # important when loading strings!
+# loadTableData (df)
+    
+```
+
+*Next, we change the default styles in Cytoscape.*
+```{r}
+
+# setNodeShapeDefault ('OCTAGON')
+# setNodeColorDefault ('#AAFF88')
+# setNodeSizeDefault  (60)
+# setNodeFontSizeDefault (30)
+    
+```
+
+![Here is the network after changing the default styles.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-05-bioconductor-graph-custom-default-styles.png)
+
+*Next, we can map moleculeType to node shapes.*
+```{r}
+
+# getNodeShapes ()   # diamond, ellipse, trapezoid, triangle, etc.
+# column <- 'moleculeType'
+# values <- c ('kinase',  'TF','cytokine')
+# shapes <- c ('DIAMOND', 'TRIANGLE', 'RECTANGLE')
+# setNodeShapeMapping (column, values, shapes)
+    
+```
+
+![Here is the network after mapping molecule types to node shape.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-06-bioconductor-graph-molecule-types-to-node-shape.png)
+
+*Next, we map expression values (log2fc) to node color as a continuous gradient.*
+```{r}
+
+# column <- 'log2fc'
+# control.points <- c (-3.0, 0.0, 3.0)
+# colors <-  c ('#5588DD', '#FFFFFF', '#DD8855')
+# setNodeColorMapping (column, control.points, colors)
+    
+```
+
+![Here is the network after mapping expression values to node color.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-07-bioconductor-graph-expression-values-to-node-color.png)
+
+*Next, we map two additional colors to set extreme colors for values less than or greater than the control points.*
+```{r}
+
+# control.points <- c (-2.0, 0.0, 2.0)
+# colors <-  c ('#2255CC', '#5588DD', '#FFFFFF', '#DD8855','#CC5522')
+# setNodeColorMapping (column, control.points, colors)
+    
+```
+
+![Here is the network after mapping an additional color to account for extreme values.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-08-bioconductor-graph-map-extreme-colors.png)
+
+*Next, we add a node size rule that changes the size of node relative to the log2fc value.*
+```{r}
+
+# control.points = c (-3.0, 2.0, 3.0)
+# sizes     = c (20, 80, 90)
+# setNodeSizeMapping (column, control.points, sizes)
+    
+```
+
+![Here is the network after adding a node size rule that changes the size of the node relative to the log2fc value.](/Users/greg/Box/courses/umass/fall-2020/evolutionary-genomics-and-bioinformatics/evo-geno-course/images/rcy3-vignette-images/image-09-bioconductor-graph-size-of-node-rule.png)
 
 
+*To select a specific node, you can use the selectNodes() function.*
+```{r}
+
+# selectNodes ('C','name')
+# getSelectedNodes ()
+
+```
+
+*To select first neighbors to your selected nodes, use the selectFirstNeighbors() function.*
+```{r}
+
+# selectFirstNeighbors ()
+
+```
+
+*To pull the names of selected names into R as a list, use the function getSelectedNodes().*
+```{r}
+
+# node.names <- getSelectedNodes ()
+
+```
+
+*To deselect nodes, use the function clearSelection().*
+```{r}
+
+# clearSelection()
+# ?clearSelection
+
+```
+
+*You can save session files using the saveSession() function.*
+```{r}
+
+# saveSession('vignette_session') #.cys
+
+```
+
+*To export high resolution images, you can use the exportImage() function.*
+```{r}
+
+# full.path=paste(getwd(),'vignette_image',sep='/')
+# exportImage(full.path, 'PNG', zoom=200) #.png scaled by 200%
+# exportImage(full.path, 'PDF') #.pdf
+# ?exportImage
+    
+```
+
+### Browse available functions, commands and arguments
+*To read the documentation on RCy3 to learn more about functions to access and control cytoscape:*
+```{r}
+
+help(package=RCy3)
+
+```
+
+*To open swagger docs for live instances of CyREST API and Commands API:*
+```{r}
+
+cyrestAPI()  # CyREST API
+commandsAPI()  # Commands API
+
+```
+
+*To list available commands and arguments in R:*
+```{r}
+
+commandsHelp("help")  
+
+```
+
+*To list available network commands:*
+```{r}
+
+commandsHelp("help network")  
+
+```
+
+*To list arguments for the network select command:*
+```{r}
+
+commandsHelp("help network select") 
+
+```
 
 
